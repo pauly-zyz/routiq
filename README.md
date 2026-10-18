@@ -24,7 +24,7 @@ Deploy by uploading the folder to any static host (Vercel, Netlify, Cloudflare P
 
 - Set `CONFIG.tokenAddress` in `main.js` once the contract is deployed (the copy button appears automatically).
 - Set `CONFIG.links` (X, Discord, GitHub). Empty links show "Coming soon".
-- Point the "Three ways" cards and the provider button at real pages.
+- Point the "See how it routes", explorer and community links at real pages when ready.
 - Replace the demo prices in `TOKENS` (`main.js`) with real quotes once the router is live.
 - The SDK/MCP/REST snippets are an API preview; update them to match the real API.
 - The public RPC (`rpc.mainnet.chain.robinhood.com`) is rate limited. For production, use a provider key (Alchemy, QuickNode, Dwellir) and check that it allows browser (CORS) requests. If the RPC fails, the page shows "RPC unavailable" instead of numbers.
