@@ -3,269 +3,335 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>ROUTIQ | Best-price routing on Robinhood Chain</title>
-  <meta name="description" content="ROUTIQ finds the best route for every trade on Robinhood Chain — stock tokens, stablecoins and ETH — across every venue, in one click.">
-  <meta name="theme-color" content="#FFFFFF">
+  <title>ROUTIQ | Smart order routing on Robinhood Chain</title>
+  <meta name="description" content="ROUTIQ splits every trade across Robinhood Chain venues to find the best price for stock tokens, stablecoins and ETH — in one signature.">
+  <meta name="theme-color" content="#07070C">
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Inter+Tight:wght@600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-<div class="landing-root">
 
-  <!-- ===== Header ===== -->
-  <header class="hdr-wrap">
-    <div class="hdr">
-      <a href="#" class="logo-lockup" aria-label="ROUTIQ home">
-        <svg class="logo-mark" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="8" fill="currentColor"/><path d="M9 22V14a4 4 0 0 1 4-4h10" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/><circle cx="9" cy="22" r="2.6" fill="#fff"/><circle cx="23" cy="10" r="2.6" fill="#fff"/><path d="M15 22h8" stroke="#fff" stroke-width="2.4" stroke-linecap="round" opacity=".55"/></svg>
-        <span class="logo-word">ROUTIQ</span>
-      </a>
-      <nav class="hdr-nav" aria-label="Main">
-        <a class="hdr-nav-link active" href="#">Home</a>
-        <a class="hdr-nav-link" href="#sources">Sources</a>
-        <a class="hdr-nav-link" href="#how">How it works</a>
-        <a class="hdr-nav-link" href="#faq">FAQ</a>
-      </nav>
-      <div class="hdr-cta">
-        <div class="hdr-social-group">
-          <a class="hdr-social" href="#" data-link="x" aria-label="X"><svg viewBox="0 0 24 24"><path fill="currentColor" d="M14.234 10.162 22.977 0h-2.072l-7.591 8.824L7.251 0H.258l9.168 13.343L.258 24H2.33l8.016-9.318L16.749 24h6.993zm-2.837 3.299-.929-1.329L3.076 1.56h3.182l5.965 8.532.929 1.329 7.754 11.09h-3.182z"/></svg></a>
-          <a class="hdr-social" href="#" data-link="discord" aria-label="Discord"><svg viewBox="0 0 24 24"><path fill="currentColor" d="M20.317 4.37a19.8 19.8 0 0 0-4.885-1.515.07.07 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.3 18.3 0 0 0-5.487 0 13 13 0 0 0-.617-1.25.08.08 0 0 0-.079-.037A19.7 19.7 0 0 0 3.677 4.37a.1.1 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.08.08 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.08.08 0 0 0 .084-.028 14 14 0 0 0 1.226-1.994.08.08 0 0 0-.041-.106 13 13 0 0 1-1.872-.892.08.08 0 0 1-.008-.128q.188-.141.372-.292a.07.07 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.07.07 0 0 1 .078.01q.181.149.373.292a.08.08 0 0 1-.006.127 12.3 12.3 0 0 1-1.873.892.08.08 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.08.08 0 0 0 .084.028 19.8 19.8 0 0 0 6.002-3.03.08.08 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.06.06 0 0 0-.031-.03M8.02 15.33c-1.182 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418m7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418"/></svg></a>
-          <a class="hdr-social" href="#" data-link="github" aria-label="GitHub"><svg viewBox="0 0 24 24"><path fill="currentColor" d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg></a>
-        </div>
-        <button class="lbtn lbtn--primary lbtn--default" data-connect type="button">
-          <span class="wallet-dot" aria-hidden="true"></span><span data-connect-label>Connect wallet</span>
-        </button>
-        <button class="hdr-menu-btn" type="button" aria-label="Open menu" aria-expanded="false" data-menu-btn>
-          <svg viewBox="0 0 24 24" width="18" height="18"><path d="M4 6h16M4 12h16M4 18h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-        </button>
-      </div>
+<!-- ===================== NAV ===================== -->
+<header class="nav" data-nav>
+  <div class="nav-inner">
+    <a href="#top" class="brand" aria-label="ROUTIQ home">
+      <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true"><defs><linearGradient id="bm" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7C5CFF"/><stop offset="1" stop-color="#38D9F5"/></linearGradient></defs><rect width="32" height="32" rx="9" fill="url(#bm)"/><path d="M9 22V14a4 4 0 0 1 4-4h10" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/><circle cx="9" cy="22" r="2.6" fill="#fff"/><circle cx="23" cy="10" r="2.6" fill="#fff"/><path d="M15 22h8" stroke="#fff" stroke-width="2.4" stroke-linecap="round" opacity=".55"/></svg>
+      <span>ROUTIQ</span>
+    </a>
+    <nav class="nav-links" aria-label="Main">
+      <a href="#routing">Routing</a>
+      <a href="#network">Network</a>
+      <a href="#build">Build</a>
+      <a href="#roadmap">Roadmap</a>
+      <a href="#faq">FAQ</a>
+    </nav>
+    <div class="nav-actions">
+      <a class="icon-btn" href="#" data-link="x" aria-label="X"><svg viewBox="0 0 24 24"><path fill="currentColor" d="M14.234 10.162 22.977 0h-2.072l-7.591 8.824L7.251 0H.258l9.168 13.343L.258 24H2.33l8.016-9.318L16.749 24h6.993zm-2.837 3.299-.929-1.329L3.076 1.56h3.182l5.965 8.532.929 1.329 7.754 11.09h-3.182z"/></svg></a>
+      <a class="icon-btn" href="#" data-link="discord" aria-label="Discord"><svg viewBox="0 0 24 24"><path fill="currentColor" d="M20.317 4.37a19.8 19.8 0 0 0-4.885-1.515.07.07 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.3 18.3 0 0 0-5.487 0 13 13 0 0 0-.617-1.25.08.08 0 0 0-.079-.037A19.7 19.7 0 0 0 3.677 4.37a.1.1 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.08.08 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.08.08 0 0 0 .084-.028 14 14 0 0 0 1.226-1.994.08.08 0 0 0-.041-.106 13 13 0 0 1-1.872-.892.08.08 0 0 1-.008-.128q.188-.141.372-.292a.07.07 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.07.07 0 0 1 .078.01q.181.149.373.292a.08.08 0 0 1-.006.127 12.3 12.3 0 0 1-1.873.892.08.08 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.08.08 0 0 0 .084.028 19.8 19.8 0 0 0 6.002-3.03.08.08 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.06.06 0 0 0-.031-.03M8.02 15.33c-1.182 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418m7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418"/></svg></a>
+      <button class="btn btn--primary btn--sm" type="button" data-connect><span class="wallet-dot" aria-hidden="true"></span><span data-connect-label>Connect wallet</span></button>
+      <button class="icon-btn menu-btn" type="button" aria-label="Open menu" aria-expanded="false" data-menu-btn><svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
     </div>
-    <div class="hdr-mobile-panel" data-menu-panel hidden>
-      <a class="hdr-mobile-link" href="#">Home</a>
-      <a class="hdr-mobile-link" href="#sources">Sources</a>
-      <a class="hdr-mobile-link" href="#how">How it works</a>
-      <a class="hdr-mobile-link" href="#faq">FAQ</a>
-    </div>
-  </header>
+  </div>
+  <div class="nav-mobile" data-menu-panel hidden>
+    <a href="#routing">Routing</a><a href="#network">Network</a><a href="#build">Build</a><a href="#roadmap">Roadmap</a><a href="#faq">FAQ</a>
+  </div>
+</header>
 
-  <main>
-    <!-- ===== Hero ===== -->
-    <section class="hero">
-      <div class="astrids" aria-hidden="true">
-        <svg class="bin bin--left" viewBox="0 0 820 820" data-pattern></svg>
-        <svg class="bin bin--right" viewBox="0 0 820 820" data-pattern></svg>
-      </div>
-      <div class="hero-inner">
-        <div class="eyebrow"><span class="dot" data-live-dot></span><span>Live on Robinhood Chain · Block <span data-block>…</span></span></div>
-        <h1 class="hero-title">Route every trade<br><span>to the best price.</span></h1>
-        <div class="works-with">
-          <p class="ww-line">Stock tokens, stablecoins and ETH — one route across every venue.</p>
+<main id="top">
+  <!-- ===================== HERO ===================== -->
+  <section class="hero">
+    <canvas class="hero-canvas" data-net aria-hidden="true"></canvas>
+    <div class="hero-glow" aria-hidden="true"></div>
+    <div class="container hero-grid">
+      <div class="hero-copy">
+        <a class="chip chip--live" href="#network"><span class="pulse-dot" data-live-dot></span>Robinhood Chain mainnet · block <b data-block>…</b></a>
+        <h1 class="hero-title">The <span class="grad-text">smartest route</span> on Robinhood Chain.</h1>
+        <p class="hero-sub">ROUTIQ splits your order across on-chain venues to get the best overall price for stock tokens, stablecoins and ETH — in a single signature.</p>
+        <div class="hero-ctas">
+          <button class="btn btn--primary btn--lg" type="button" data-connect><span class="wallet-dot" aria-hidden="true"></span><span data-connect-label>Connect wallet</span></button>
+          <a class="btn btn--ghost btn--lg" href="#routing">See how it routes <span aria-hidden="true">→</span></a>
         </div>
-        <div class="pill-wrap">
-          <p class="pill-label">Add Robinhood Chain to your wallet</p>
-          <div class="cta-cli">
-            <span class="cta-cli-pr">RPC</span>
-            <span class="cta-cli-cmd" data-copy-src>https://rpc.mainnet.chain.robinhood.com</span>
-            <button class="cta-cli-copy" type="button" data-copy>Copy</button>
+        <ul class="hero-facts">
+          <li><span>Chain ID</span><b>4663</b></li>
+          <li><span>Gas</span><b>ETH</b></li>
+          <li><span>Markets</span><b>24/7</b></li>
+          <li><button class="link" type="button" data-add-chain>+ Add network</button></li>
+        </ul>
+      </div>
+
+      <!-- Swap preview widget -->
+      <div class="swap-card spot" data-swap>
+        <div class="swap-head">
+          <span class="swap-title">Route preview</span>
+          <span class="tag tag--warn">Demo</span>
+        </div>
+        <div class="swap-box">
+          <label class="swap-label" for="amt-in">You pay</label>
+          <div class="swap-row">
+            <input id="amt-in" class="swap-input" inputmode="decimal" autocomplete="off" value="2500" data-amt-in>
+            <select class="token-select" data-tok-in aria-label="Token to pay"></select>
           </div>
-          <p class="pill-caption">Chain ID 4663 · Gas in ETH · or <button class="link-btn" type="button" data-add-chain>add it in one click</button></p>
+          <div class="swap-usd" data-usd-in>≈ $2,500</div>
         </div>
+        <button class="swap-flip" type="button" aria-label="Flip tokens" data-flip><svg viewBox="0 0 24 24"><path d="M7 4v16m0 0-3-3m3 3 3-3M17 20V4m0 0-3 3m3-3 3 3" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+        <div class="swap-box">
+          <span class="swap-label">You receive</span>
+          <div class="swap-row">
+            <output class="swap-input swap-output" data-amt-out>0</output>
+            <select class="token-select" data-tok-out aria-label="Token to receive"></select>
+          </div>
+          <div class="swap-usd" data-rate>—</div>
+        </div>
+        <div class="route-box">
+          <div class="route-box-head"><span>Best route</span><span class="muted" data-route-count>—</span></div>
+          <div class="route-bars" data-route-bars></div>
+        </div>
+        <dl class="swap-meta">
+          <div><dt>Price impact</dt><dd data-impact>—</dd></div>
+          <div><dt>Better than best single venue</dt><dd class="pos" data-saved>—</dd></div>
+          <div><dt>Est. network fee</dt><dd data-fee>—</dd></div>
+        </dl>
+        <button class="btn btn--primary btn--block" type="button" data-swap-btn>Connect wallet to swap</button>
+        <p class="swap-note">Demo prices for illustration only — not a live quote.</p>
       </div>
-    </section>
+    </div>
+  </section>
 
-    <!-- ===== Connection diagram + sources wall ===== -->
-    <section class="section cv-section" id="sources">
-      <div class="cv" data-reveal>
-        <div class="cv-node cv-node--you">You or your agent</div>
-        <svg class="cv-stem" viewBox="0 0 2 36" preserveAspectRatio="none"><line x1="1" y1="0" x2="1" y2="36" class="cv-line-base"/></svg>
-        <div class="cv-node cv-node--brand">
-          <svg class="logo-mark logo-mark--sm" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="8" fill="var(--accent)"/><path d="M9 22V14a4 4 0 0 1 4-4h10" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/><circle cx="9" cy="22" r="2.6" fill="#fff"/><circle cx="23" cy="10" r="2.6" fill="#fff"/></svg>
-          ROUTIQ
-        </div>
-        <svg class="cv-fan" viewBox="0 0 1000 80" preserveAspectRatio="none" aria-hidden="true">
-          <g class="cv-fan-base">
-            <path d="M500 0 C500 40 100 40 100 80" pathLength="1"/>
-            <path d="M500 0 C500 40 300 40 300 80" pathLength="1"/>
-            <path d="M500 0 L500 80" pathLength="1"/>
-            <path d="M500 0 C500 40 700 40 700 80" pathLength="1"/>
-            <path d="M500 0 C500 40 900 40 900 80" pathLength="1"/>
-          </g>
-          <g class="cv-fan-sheen">
-            <path d="M500 0 C500 40 100 40 100 80" pathLength="100"/>
-            <path d="M500 0 C500 40 300 40 300 80" pathLength="100" style="animation-delay:.4s"/>
-            <path d="M500 0 L500 80" pathLength="100" style="animation-delay:.8s"/>
-            <path d="M500 0 C500 40 700 40 700 80" pathLength="100" style="animation-delay:1.2s"/>
-            <path d="M500 0 C500 40 900 40 900 80" pathLength="100" style="animation-delay:1.6s"/>
-          </g>
+  <!-- ===================== MARQUEE ===================== -->
+  <div class="marquee" aria-label="Assets and venues ROUTIQ plans to route">
+    <div class="marquee-track" data-marquee></div>
+  </div>
+
+  <!-- ===================== ROUTING DIAGRAM ===================== -->
+  <section class="section" id="routing">
+    <div class="container">
+      <div class="sec-head" data-reveal>
+        <span class="eyebrow">01 · Routing</span>
+        <h2 class="sec-title">One order in. <span class="grad-text">The best fill out.</span></h2>
+        <p class="sec-sub">Big orders move the price on a single pool. ROUTIQ breaks them into pieces and sends each piece where it trades best. Change the amount in the preview above and watch the route update.</p>
+      </div>
+      <div class="diagram spot" data-reveal>
+        <svg class="diagram-svg" viewBox="0 0 1000 340" data-diagram aria-label="Order routing diagram">
+          <defs>
+            <linearGradient id="rg" gradientUnits="userSpaceOnUse" x1="170" y1="0" x2="830" y2="0"><stop offset="0" stop-color="#7C5CFF"/><stop offset="1" stop-color="#38D9F5"/></linearGradient>
+            <filter id="glow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="4"/></filter>
+          </defs>
+          <path id="r0" class="route-path" d="M170 170 C300 170 320 70 430 70 L570 70 C680 70 700 170 830 170"/>
+          <path id="r1" class="route-path" d="M170 170 L830 170"/>
+          <path id="r2" class="route-path" d="M170 170 C300 170 320 270 430 270 L570 270 C680 270 700 170 830 170"/>
+          <g class="route-flow" data-flow="0"><path class="route-active" d="M170 170 C300 170 320 70 430 70 L570 70 C680 70 700 170 830 170"/></g>
+          <g class="route-flow" data-flow="1"><path class="route-active" d="M170 170 L830 170"/></g>
+          <g class="route-flow" data-flow="2"><path class="route-active" d="M170 170 C300 170 320 270 430 270 L570 270 C680 270 700 170 830 170"/></g>
+          <g data-particles></g>
+          <g class="d-node"><rect x="40" y="140" width="130" height="60" rx="14"/><text x="105" y="166" class="d-k">YOUR ORDER</text><text x="105" y="188" class="d-v" data-d-in>2,500 USDG</text></g>
+          <g class="d-node d-node--out"><rect x="830" y="140" width="130" height="60" rx="14"/><text x="895" y="166" class="d-k">BEST FILL</text><text x="895" y="188" class="d-v" data-d-out>—</text></g>
+          <g class="d-venue" data-venue="0"><rect x="430" y="45" width="140" height="50" rx="12"/><text x="500" y="67" class="d-v">Uniswap</text><text x="500" y="85" class="d-k" data-share="0">—</text></g>
+          <g class="d-venue" data-venue="1"><rect x="430" y="145" width="140" height="50" rx="12"/><text x="500" y="167" class="d-v">Arcus</text><text x="500" y="185" class="d-k" data-share="1">—</text></g>
+          <g class="d-venue" data-venue="2"><rect x="430" y="245" width="140" height="50" rx="12"/><text x="500" y="267" class="d-v">Pleiades</text><text x="500" y="285" class="d-k" data-share="2">—</text></g>
         </svg>
-        <div class="tool-wall" data-wall></div>
-        <p class="wall-note">Planned liquidity sources and assets. Integrations roll out in phases — check the docs for what is live.</p>
+        <ol class="steps">
+          <li data-reveal><span class="step-n">1</span><div><b>Quote</b><p>Read depth on every venue for your pair in one pass.</p></div></li>
+          <li data-reveal style="--i:1"><span class="step-n">2</span><div><b>Split</b><p>Find the mix of venues with the lowest total price impact.</p></div></li>
+          <li data-reveal style="--i:2"><span class="step-n">3</span><div><b>Settle</b><p>Execute every leg in one transaction, with a slippage limit you set.</p></div></li>
+        </ol>
       </div>
-    </section>
+    </div>
+  </section>
 
-    <!-- ===== How it works ===== -->
-    <div class="hiw-band" id="how" data-reveal>
-      <section class="section">
-        <h2 class="hiw-title">Tell ROUTIQ what to trade. It finds the route itself.</h2>
-        <div class="hiw-flow">
-          <div class="hiw-node">
-            <div class="hiw-icon"><svg class="hiw-icon-glyph" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="2"/><path d="m21 21-4.3-4.3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></div>
-            <div class="hiw-node-title">Quote every venue</div>
-            <div class="hiw-chip">routiq.quote()</div>
-            <div class="hiw-hint">AMMs, order books &amp; prop pools<br>compared in one call</div>
+  <!-- ===================== LIVE NETWORK BENTO ===================== -->
+  <section class="section section--alt" id="network">
+    <div class="container">
+      <div class="sec-head" data-reveal>
+        <span class="eyebrow">02 · Network</span>
+        <h2 class="sec-title">Built on Robinhood Chain. <span class="grad-text">Watching it live.</span></h2>
+        <p class="sec-sub">Numbers below come straight from the chain's public RPC, refreshed every few seconds.</p>
+      </div>
+      <div class="bento">
+        <article class="card spot bento-blk" data-reveal>
+          <div class="card-k"><span class="pulse-dot" data-live-dot></span>Latest block <span class="muted" data-live-label>connecting…</span></div>
+          <div class="big-num" data-block>…</div>
+          <svg class="spark" viewBox="0 0 300 70" preserveAspectRatio="none" aria-hidden="true"><defs><linearGradient id="sg" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="300" y2="0"><stop offset="0" stop-color="#7C5CFF"/><stop offset="1" stop-color="#38D9F5"/></linearGradient></defs><path class="spark-fill" data-spark-fill d=""/><path class="spark-line" data-spark d=""/></svg>
+          <div class="card-foot"><span>Measured block time</span><b data-blocktime>—</b></div>
+          <div class="card-foot"><span>Blocks seen this visit</span><b data-seen>0</b></div>
+        </article>
+        <article class="card spot bento-gas" data-reveal style="--i:1">
+          <div class="card-k">Gas price</div>
+          <div class="mid-num"><span data-gas>…</span><small> gwei</small></div>
+          <p class="card-p">Paid in ETH. A typical swap needs only a small amount of ETH for gas.</p>
+        </article>
+        <article class="card spot bento-chain" data-reveal style="--i:2">
+          <div class="card-k">Chain ID</div>
+          <div class="mid-num">4663</div>
+          <button class="btn btn--soft btn--sm" type="button" data-add-chain>Add to wallet</button>
+        </article>
+        <article class="card spot bento-mkt" data-reveal style="--i:3">
+          <div class="mkt-ring" aria-hidden="true"><svg viewBox="0 0 120 120"><defs><linearGradient id="ringg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7C5CFF"/><stop offset="1" stop-color="#38D9F5"/></linearGradient></defs><circle cx="60" cy="60" r="50" class="ring-bg"/><circle cx="60" cy="60" r="50" class="ring-open" data-ring-open/><line x1="60" y1="60" x2="100" y2="60" class="ring-hand" data-ring-hand/><circle cx="60" cy="60" r="4" fill="#F4F4F8"/></svg></div>
+          <div>
+            <div class="card-k">US stock market · regular hours</div>
+            <div class="mkt-status" data-mkt-status>—</div>
+            <p class="card-p" data-mkt-note>Stock tokens on Robinhood Chain trade around the clock, even when the exchange is closed.</p>
           </div>
-          <div class="hiw-link" aria-hidden="true"></div>
-          <div class="hiw-node" style="--rd:.1s">
-            <div class="hiw-icon"><svg class="hiw-icon-glyph" viewBox="0 0 24 24"><path d="M5 19V9a4 4 0 0 1 4-4h10" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M11 19h8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="5" cy="19" r="2" fill="currentColor"/><circle cx="19" cy="5" r="2" fill="currentColor"/></svg></div>
-            <div class="hiw-node-title">Split the route</div>
-            <div class="hiw-chip">routiq.route()</div>
-            <div class="hiw-hint">order split to cut price impact<br>slippage guard built in</div>
+        </article>
+        <article class="card spot bento-l2" data-reveal style="--i:4">
+          <div>
+            <div class="card-k">Architecture</div>
+            <p class="card-p card-p--lg">Ethereum Layer 2 on <b>Arbitrum Orbit</b>. Fast blocks, low fees, settled on Ethereum.</p>
           </div>
-          <div class="hiw-link" aria-hidden="true"></div>
-          <div class="hiw-node" style="--rd:.2s">
-            <div class="hiw-icon"><svg class="hiw-icon-glyph" viewBox="0 0 24 24"><path d="m5 12 4.5 4.5L19 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-            <div class="hiw-node-title">Settle on-chain</div>
-            <div class="hiw-chip">~100 ms blocks</div>
-            <div class="hiw-hint">one signature, one transaction<br>gas paid in ETH</div>
-          </div>
-        </div>
-      </section>
-    </div>
-
-    <!-- ===== Statement + live stats ===== -->
-    <section class="killed" data-reveal>
-      <h2 class="killed-title">Stop checking five DEXs.</h2>
-      <p class="killed-sub">ROUTIQ reads the whole chain so you get one price, one click and one transaction.</p>
-    </section>
-    <div class="stats" data-reveal>
-      <div class="stat">
-        <div class="stat-num stat-accent" data-block>…</div>
-        <div class="stat-lbl">Latest block<br><span class="stat-live" data-live-label>connecting to RPC</span></div>
-      </div>
-      <div class="stat" style="--rd:.1s">
-        <div class="stat-num" data-gas>…</div>
-        <div class="stat-lbl">Gas price (gwei)<br>paid in ETH</div>
-      </div>
-      <div class="stat" style="--rd:.2s">
-        <div class="stat-num">4663</div>
-        <div class="stat-lbl">Robinhood Chain ID<br>Arbitrum Orbit L2</div>
+          <a class="btn btn--ghost btn--sm" href="https://robinhoodchain.blockscout.com" target="_blank" rel="noopener">Open explorer ↗</a>
+        </article>
       </div>
     </div>
+  </section>
 
-    <!-- ===== Terminal demo ===== -->
-    <section class="section term-section" data-reveal>
-      <div class="term-wrap">
-        <div class="term">
-          <div class="term-bar">
-            <span class="term-dot"></span><span class="term-dot"></span><span class="term-dot"></span>
-            <span class="term-title">~/routiq · route preview</span>
-            <span class="term-bal">simulated data</span>
-          </div>
-          <div class="term-body" data-term aria-label="Simulated ROUTIQ route preview"></div>
-        </div>
+  <!-- ===================== FEATURES ===================== -->
+  <section class="section">
+    <div class="container">
+      <div class="sec-head" data-reveal>
+        <span class="eyebrow">03 · Product</span>
+        <h2 class="sec-title">Everything a trader on <span class="grad-text">Robinhood Chain</span> needs.</h2>
       </div>
-    </section>
-
-    <!-- ===== Three ways ===== -->
-    <div class="routes-band" data-reveal>
-      <section class="section">
-        <div class="routes-head">
-          <h2 class="routes-title">Three ways to route.</h2>
-          <p class="routes-sub">Same router, same best price — whichever way you trade.</p>
-        </div>
-        <div class="routes-grid">
-          <a class="route-card" href="#">
-            <div><h3 class="route-name">Web app</h3><p class="route-blurb">Connect a wallet and swap in the browser.</p></div>
-            <svg class="route-chev" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-          </a>
-          <a class="route-card" href="#">
-            <div><h3 class="route-name">SDK</h3><p class="route-blurb">Add best-price swaps to your own dApp.</p></div>
-            <svg class="route-chev" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-          </a>
-          <a class="route-card" href="#">
-            <div><h3 class="route-name">Agent skill</h3><p class="route-blurb">Let your AI agent quote and route via MCP.</p></div>
-            <svg class="route-chev" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-          </a>
-        </div>
-      </section>
-    </div>
-
-    <!-- ===== CTA band ===== -->
-    <section class="cta" data-reveal>
-      <h2 class="cta-title">Get the best route on Robinhood Chain.</h2>
-      <p class="cta-sub">Connect your wallet — we add the network for you.</p>
-      <div class="cta-actions">
-        <button class="lbtn lbtn--inverse lbtn--large" type="button" data-connect><span data-connect-label>Connect wallet</span></button>
-      </div>
-      <div class="pill-wrap">
-        <div class="cta-cli">
-          <span class="cta-cli-pr">$ROUTIQ</span>
-          <span class="cta-cli-cmd" data-ca>Contract address announced on official channels only</span>
-          <button class="cta-cli-copy" type="button" data-copy-ca hidden>Copy</button>
-        </div>
-      </div>
-    </section>
-
-    <!-- ===== FAQ ===== -->
-    <section class="section faq-section" id="faq">
-      <div class="sec-head sec-head--centered">
-        <div class="sec-tag">FAQ</div>
-        <h2 class="sec-title">Common questions.</h2>
-      </div>
-      <div class="faq">
-        <details>
-          <summary>What is ROUTIQ?</summary>
-          <p>A routing layer for Robinhood Chain. It compares prices across the chain's trading venues and splits your order to get the best overall execution in a single transaction.</p>
-        </details>
-        <details>
-          <summary>Which network does it run on?</summary>
-          <p>Robinhood Chain mainnet — an Ethereum Layer 2 built on Arbitrum Orbit. Chain ID 4663, gas is paid in ETH, and you can track transactions on the Blockscout explorer.</p>
-        </details>
-        <details>
-          <summary>Which wallets are supported?</summary>
-          <p>Any browser wallet that supports the standard Ethereum provider, such as MetaMask, Rabby or Robinhood Wallet. ROUTIQ adds Robinhood Chain to your wallet when you connect.</p>
-        </details>
-        <details>
-          <summary>Can everyone trade stock tokens?</summary>
-          <p>Stock token eligibility is set by the issuer and depends on where you live. ROUTIQ only routes assets your wallet is allowed to hold and does not bypass those rules.</p>
-        </details>
-        <details>
-          <summary>Is there a ROUTIQ token?</summary>
-          <p>The official contract address is only published on this site and our official social accounts. Never trust addresses sent in DMs.</p>
-        </details>
-      </div>
-    </section>
-
-    <!-- ===== Provider card ===== -->
-    <section class="section provider-section">
-      <div class="provider-card" data-reveal>
-        <h2 class="provider-title">Run a pool on Robinhood Chain?</h2>
-        <p class="provider-sub">Plug your AMM, order book or vault into ROUTIQ and every trade routed through it can reach your liquidity.</p>
-        <a class="provider-btn" href="#" data-link="github">Become a liquidity source →</a>
-      </div>
-    </section>
-  </main>
-
-  <!-- ===== Footer ===== -->
-  <footer class="ftr-section">
-    <div class="ftr">
-      <div class="ftr-brand-col">
-        <p class="ftr-brand">ROUTIQ routes trades across every venue on Robinhood Chain. One route, one signature, best price.</p>
-        <p class="ftr-copy">© 2026 ROUTIQ · Independent project, not affiliated with Robinhood Markets, Inc.</p>
-      </div>
-      <div class="ftr-cols">
-        <div class="ftr-col"><h4>Product</h4><a class="ftr-link" href="#">Home</a><a class="ftr-link" href="#sources">Sources</a><a class="ftr-link" href="#how">How it works</a></div>
-        <div class="ftr-col"><h4>Network</h4><a class="ftr-link" href="https://robinhoodchain.blockscout.com" target="_blank" rel="noopener">Explorer</a><a class="ftr-link" href="#" data-add-chain>Add network</a><a class="ftr-link" href="#faq">FAQ</a></div>
-        <div class="ftr-col"><h4>Community</h4><a class="ftr-link" href="#" data-link="x">X</a><a class="ftr-link" href="#" data-link="discord">Discord</a><a class="ftr-link" href="#" data-link="github">GitHub</a></div>
+      <div class="features">
+        <article class="card spot feat" data-reveal><div class="feat-ic"><svg viewBox="0 0 24 24"><path d="M4 18V9a4 4 0 0 1 4-4h12M10 18h10M4 18h.01" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></div><h3>Split routing</h3><p>Orders spread across AMMs, order books and prop pools for the lowest total impact.</p><span class="tag">Phase 2</span></article>
+        <article class="card spot feat" data-reveal style="--i:1"><div class="feat-ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 7v5l3 2" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></div><h3>24/7 stock tokens</h3><p>Trade TSLA, NVDA, AAPL and more on weekends and after hours.</p><span class="tag">Phase 2</span></article>
+        <article class="card spot feat" data-reveal style="--i:2"><div class="feat-ic"><svg viewBox="0 0 24 24"><path d="M3 17l5-5 4 4 8-8M15 8h5v5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div><h3>Premium monitor</h3><p>See when a stock token trades above or below its last exchange price.</p><span class="tag">Phase 3</span></article>
+        <article class="card spot feat" data-reveal style="--i:3"><div class="feat-ic"><svg viewBox="0 0 24 24"><path d="M12 3l8 3v6c0 4.5-3.4 8.3-8 9-4.6-.7-8-4.5-8-9V6z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="m9 12 2 2 4-4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></div><h3>Verified tokens</h3><p>Official stock tokens are marked. Copycats and look-alike tickers get a warning.</p><span class="tag">Phase 3</span></article>
+        <article class="card spot feat" data-reveal style="--i:4"><div class="feat-ic"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="3" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M3 10h18M8 3v4M16 3v4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></div><h3>DCA &amp; limit orders</h3><p>Buy NVDA every Friday with USDG, or set a price and let ROUTIQ wait for it.</p><span class="tag">Phase 3</span></article>
+        <article class="card spot feat" data-reveal style="--i:5"><div class="feat-ic"><svg viewBox="0 0 24 24"><rect x="5" y="8" width="14" height="11" rx="3" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 4v4M9 13h.01M15 13h.01M9 16.5h6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></div><h3>Agent-ready</h3><p>AI agents can request quotes and routes through an MCP skill and SDK.</p><span class="tag">Phase 4</span></article>
       </div>
     </div>
-    <div class="ftr-giant" aria-hidden="true">
-      <svg viewBox="0 0 1000 170" class="ftr-giant-logo"><text x="500" y="150" text-anchor="middle" textLength="1000" lengthAdjust="spacingAndGlyphs">ROUTIQ</text></svg>
+  </section>
+
+  <!-- ===================== BUILD (CODE TABS) ===================== -->
+  <section class="section section--alt" id="build">
+    <div class="container build-grid">
+      <div class="build-copy" data-reveal>
+        <span class="eyebrow">04 · Build</span>
+        <h2 class="sec-title">Best-price swaps in <span class="grad-text">a few lines.</span></h2>
+        <p class="sec-sub">Wallets, dApps and AI agents will plug into the same router. One quote call, one swap call.</p>
+        <ul class="checks">
+          <li>TypeScript SDK for dApps and wallets</li>
+          <li>MCP skill so agents can trade on your behalf</li>
+          <li>REST API for bots and dashboards</li>
+        </ul>
+      </div>
+      <div class="code spot" data-reveal style="--i:1">
+        <div class="code-tabs" role="tablist">
+          <button role="tab" aria-selected="true" data-tab="sdk">SDK</button>
+          <button role="tab" aria-selected="false" data-tab="mcp">Agent (MCP)</button>
+          <button role="tab" aria-selected="false" data-tab="rest">REST</button>
+          <span class="tag tag--warn">API preview</span>
+          <button class="code-copy" type="button" data-code-copy>Copy</button>
+        </div>
+<pre class="code-body" data-panel="sdk"><code><span class="c-k">import</span> { Routiq } <span class="c-k">from</span> <span class="c-s">"@routiq/sdk"</span>;
+
+<span class="c-k">const</span> routiq = <span class="c-k">new</span> <span class="c-f">Routiq</span>({ chainId: <span class="c-n">4663</span> });
+
+<span class="c-k">const</span> quote = <span class="c-k">await</span> routiq.<span class="c-f">quote</span>({
+  sell: <span class="c-s">"USDG"</span>, buy: <span class="c-s">"TSLA"</span>, amount: <span class="c-s">"2500"</span>,
+});
+<span class="c-c">// quote.route → [{ venue: "uniswap", share: 0.62 }, …]</span>
+
+<span class="c-k">await</span> routiq.<span class="c-f">swap</span>(quote, { signer, slippageBps: <span class="c-n">30</span> });</code></pre>
+<pre class="code-body" data-panel="mcp" hidden><code><span class="c-c">// Add ROUTIQ to your agent's MCP config</span>
+{
+  <span class="c-s">"mcpServers"</span>: {
+    <span class="c-s">"routiq"</span>: {
+      <span class="c-s">"url"</span>: <span class="c-s">"$ROUTIQ_MCP_URL"</span>
+    }
+  }
+}
+
+<span class="c-c">// Then just ask:</span>
+<span class="c-c">// "Buy $500 of NVDA with USDG at the best price."</span></code></pre>
+<pre class="code-body" data-panel="rest" hidden><code>curl -X POST <span class="c-s">$ROUTIQ_API</span>/v1/quote \
+  -H <span class="c-s">"content-type: application/json"</span> \
+  -d <span class="c-s">'{"sell":"USDG","buy":"TSLA","amount":"2500"}'</span>
+
+<span class="c-c"># → { "out": "…", "impactBps": 4,</span>
+<span class="c-c">#     "route": [{ "venue": "uniswap", "share": 0.62 }, …] }</span></code></pre>
+      </div>
     </div>
-  </footer>
-</div>
+  </section>
+
+  <!-- ===================== ROADMAP ===================== -->
+  <section class="section" id="roadmap">
+    <div class="container">
+      <div class="sec-head" data-reveal>
+        <span class="eyebrow">05 · Roadmap</span>
+        <h2 class="sec-title">Where ROUTIQ is going.</h2>
+      </div>
+      <div class="roadmap" data-reveal>
+        <div class="rm-line"><span class="rm-progress"></span></div>
+        <article class="rm-item is-now"><span class="rm-dot"></span><span class="rm-when">Now</span><h3>Foundation</h3><ul><li>Website &amp; community</li><li>Wallet + network setup</li><li>Live chain data</li></ul></article>
+        <article class="rm-item"><span class="rm-dot"></span><span class="rm-when">Phase 2</span><h3>Router beta</h3><ul><li>Uniswap + Arcus routing</li><li>Swap app with slippage guard</li><li>Stock tokens 24/7</li></ul></article>
+        <article class="rm-item"><span class="rm-dot"></span><span class="rm-when">Phase 3</span><h3>Trader tools</h3><ul><li>Premium monitor</li><li>DCA &amp; limit orders</li><li>Verified token list</li></ul></article>
+        <article class="rm-item"><span class="rm-dot"></span><span class="rm-when">Phase 4</span><h3>Open router</h3><ul><li>SDK &amp; MCP agent skill</li><li>USDG yield routing</li><li>More venues</li></ul></article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== FAQ ===================== -->
+  <section class="section section--alt" id="faq">
+    <div class="container faq-grid">
+      <div class="faq-head" data-reveal>
+        <span class="eyebrow">06 · FAQ</span>
+        <h2 class="sec-title">Questions, answered.</h2>
+        <p class="sec-sub">Still curious? Ask in our community channels.</p>
+      </div>
+      <div class="faq" data-reveal style="--i:1">
+        <details open><summary>What is ROUTIQ?</summary><p>A smart order router for Robinhood Chain. It compares prices across the chain's trading venues and splits your order to get the best overall price in one transaction.</p></details>
+        <details><summary>Is the swap preview real?</summary><p>Not yet. The preview uses demo prices to show how routing works. Real quotes arrive with the router beta (Phase 2).</p></details>
+        <details><summary>Which network does it run on?</summary><p>Robinhood Chain mainnet — an Ethereum Layer 2 built on Arbitrum Orbit. Chain ID 4663, gas is paid in ETH.</p></details>
+        <details><summary>Which wallets work?</summary><p>Any browser wallet that supports the standard Ethereum provider, such as MetaMask, Rabby or Robinhood Wallet. ROUTIQ adds Robinhood Chain for you.</p></details>
+        <details><summary>Can everyone trade stock tokens?</summary><p>Eligibility is set by the token issuer and depends on where you live. ROUTIQ only routes assets your wallet is allowed to hold and does not bypass those rules.</p></details>
+        <details><summary>Is there a ROUTIQ token?</summary><p>The official contract address is published only on this site and our official accounts. Never trust addresses sent in DMs.</p></details>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== CTA ===================== -->
+  <section class="section">
+    <div class="container">
+      <div class="cta-panel" data-reveal>
+        <div class="cta-mesh" aria-hidden="true"></div>
+        <h2 class="cta-title">Trade smarter on Robinhood Chain.</h2>
+        <p class="cta-sub">Connect your wallet now — we'll add the network and let you know when the router goes live.</p>
+        <div class="cta-actions">
+          <button class="btn btn--light btn--lg" type="button" data-connect><span class="wallet-dot" aria-hidden="true"></span><span data-connect-label>Connect wallet</span></button>
+          <button class="btn btn--ghost btn--lg" type="button" data-add-chain>Add Robinhood Chain</button>
+        </div>
+        <div class="ca-pill">
+          <span class="ca-k">$ROUTIQ</span>
+          <span class="ca-v" data-ca>Contract address announced on official channels only</span>
+          <button class="ca-copy" type="button" data-copy-ca hidden>Copy</button>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- ===================== FOOTER ===================== -->
+<footer class="footer">
+  <div class="container footer-grid">
+    <div class="footer-brand">
+      <a href="#top" class="brand"><svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="9" fill="url(#bm)"/><path d="M9 22V14a4 4 0 0 1 4-4h10" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/><circle cx="9" cy="22" r="2.6" fill="#fff"/><circle cx="23" cy="10" r="2.6" fill="#fff"/></svg><span>ROUTIQ</span></a>
+      <p>Smart order routing for Robinhood Chain. One order, every venue, best price.</p>
+    </div>
+    <div class="footer-cols">
+      <div><h4>Product</h4><a href="#routing">Routing</a><a href="#build">Build</a><a href="#roadmap">Roadmap</a></div>
+      <div><h4>Network</h4><a href="https://robinhoodchain.blockscout.com" target="_blank" rel="noopener">Explorer</a><a href="#" data-add-chain>Add network</a><a href="#network">Live stats</a></div>
+      <div><h4>Community</h4><a href="#" data-link="x">X</a><a href="#" data-link="discord">Discord</a><a href="#" data-link="github">GitHub</a></div>
+    </div>
+  </div>
+  <div class="footer-word" aria-hidden="true">ROUTIQ</div>
+  <div class="container footer-legal">
+    <span>© 2026 ROUTIQ</span>
+    <span>Independent project, not affiliated with Robinhood Markets, Inc. Nothing here is financial advice.</span>
+  </div>
+</footer>
 
 <div class="toast" role="status" aria-live="polite" data-toast></div>
 <script src="main.js"></script>
