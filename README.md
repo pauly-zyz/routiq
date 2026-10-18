@@ -1,43 +1,56 @@
-# ROUTIQ — landing page
+# ROUTIQ — website
 
-Landing page for ROUTIQ, a smart order router on **Robinhood Chain** (Arbitrum Orbit L2, chain ID 4663).
-Dark theme with a violet-to-cyan gradient accent, Space Grotesk headings and an animated route network.
+ROUTIQ is a tool router for AI agents on **Robinhood Chain** (Ethereum L2 on Arbitrum Orbit, chain ID 4663).
+An agent installs one skill, then discovers, compares and pays per call for on-chain tools — stock-token prices,
+swap routes, wallets, DeFi and safety checks — from one USDG balance.
 
-Plain HTML/CSS/JS, no build step.
+This repo holds the marketing site.
+
+## Stack
+
+Same family as monid.ai:
+
+- [Nuxt 4](https://nuxt.com) (Vue 3, TypeScript) — static generation
+- [Nuxt UI 4](https://ui.nuxt.com) components + [Tailwind CSS 4](https://tailwindcss.com)
+- [Iconify](https://iconify.design) icons via `@nuxt/icon` (Lucide + Simple Icons, bundled locally)
+- Self-hosted fonts from `@fontsource` (Inter, Space Grotesk, JetBrains Mono)
+
+## Run it
 
 ```bash
-python3 -m http.server 8000   # then open http://localhost:8000
+npm install          # .npmrc sets legacy-peer-deps (works around an npm peer-resolution bug)
+npm run dev          # http://localhost:3000
+npm run generate     # static site in .output/public — deploy to Vercel, Netlify, Cloudflare Pages…
+npm run typecheck
 ```
 
-Deploy by uploading the folder to any static host (Vercel, Netlify, Cloudflare Pages, GitHub Pages).
+## Layout
 
-## Files
-
-| File | What it holds |
+| Path | What it holds |
 | --- | --- |
-| `index.html` | All sections and copy |
-| `styles.css` | Design tokens at the top (`--accent` sets the brand colour) |
-| `main.js` | `CONFIG` at the top: chain details, token address, social links |
-| `assets/favicon.svg` | Logo mark |
+| `app/pages/index.vue` | Page: list of sections in order |
+| `app/components/` | One component per section (`HeroSection`, `ToolCatalog`, `PricingSection`, …) |
+| `app/data/tools.ts` | Tool catalog (name, category, source, planned price, status) |
+| `app/data/agentDemos.ts` | Scripted sessions shown in the hero agent console |
+| `app/composables/useSite.ts` | **Edit before launch:** token address, social links, chain details |
+| `app/composables/useChain.ts` | Live block / gas from the public RPC |
+| `app/composables/useWallet.ts` | EIP-1193 wallet connect + add/switch to Robinhood Chain |
+| `app/assets/css/main.css` | Theme tokens and effects (gradients, glass, border beam, reveal) |
+| `public/SKILL.md` | The skill file agents read (`set up <site>/SKILL.md`) |
 
 ## Before launch
 
-- Set `CONFIG.tokenAddress` in `main.js` once the contract is deployed (the copy button appears automatically).
-- Set `CONFIG.links` (X, Discord, GitHub). Empty links show "Coming soon".
-- Point the "See how it routes", explorer and community links at real pages when ready.
-- Replace the demo prices in `TOKENS` (`main.js`) with real quotes once the router is live.
-- The SDK/MCP/REST snippets are an API preview; update them to match the real API.
-- The public RPC (`rpc.mainnet.chain.robinhood.com`) is rate limited. For production, use a provider key (Alchemy, QuickNode, Dwellir) and check that it allows browser (CORS) requests. If the RPC fails, the page shows "RPC unavailable" instead of numbers.
+- Set `SITE.tokenAddress` and `SITE.links` in `app/composables/useSite.ts`. Empty links show "Coming soon".
+- Set `NUXT_PUBLIC_SITE_URL` (e.g. `https://your-domain`) so the install command shows your domain during prerender.
+- Use a provider RPC (Alchemy, QuickNode, Dwellir) via `NUXT_PUBLIC_RPC_URL` and make sure it allows browser (CORS) requests.
+  The public RPC is rate limited. If it fails, the page shows "RPC unavailable" instead of numbers.
+- Update `public/SKILL.md` when the real API, MCP URL and CLI are published.
+- The unscoped npm name `routiq` belongs to an unrelated project (a localhost tunnel tool). Publish the CLI under
+  your own scope (for example `@<your-org>/routiq`) and never tell users to `npm install routiq`.
 
-## Sections
+## What is real vs. preview
 
-Floating nav · hero with interactive route preview · asset/venue marquee · routing diagram (follows the preview) · live network bento · product features · code tabs (SDK / MCP / REST) · roadmap · FAQ · CTA · footer.
-
-## What works today
-
-- Wallet connect for any EIP-1193 wallet (MetaMask, Rabby, Robinhood Wallet), with automatic switch/add of Robinhood Chain.
-- Live block height and gas price from the public RPC, refreshed every 4 s and paused while the tab is hidden.
-- Route preview widget: pick tokens and an amount; the split across venues, price impact and the diagram update. Prices are demo values, labelled as such. The network fee estimate uses the live gas price.
-- Measured block time and a sparkline of block production, plus a US market open/closed clock (regular hours, holidays not included).
-- Copy buttons, code tabs, FAQ accordion and mobile menu.
-- All animation respects `prefers-reduced-motion`.
+- **Real:** wallet connect and network switch, live block / gas / measured block time, US market clock,
+  the `chain.status` result in the agent console, the hosted `SKILL.md`.
+- **Preview (labelled on the page):** the tool catalog and its prices, other agent console results,
+  the balance card, MCP and CLI. These describe the planned product.
