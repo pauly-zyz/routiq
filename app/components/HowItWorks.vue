@@ -2,7 +2,7 @@
 const steps = [
   { icon: 'i-lucide-search', title: 'Discover', code: 'routiq.discover("…")', text: 'Your agent describes the job. ROUTIQ ranks matching tools by fit and price.' },
   { icon: 'i-lucide-play', title: 'Run', code: 'routiq.run(tool, args)', text: 'The agent calls the tool right away. No sign-ups, no API keys per provider.' },
-  { icon: 'i-lucide-receipt', title: 'Pay per call', code: '−$0.002 USDG', text: 'Each call is debited from one on-chain balance. Nothing to subscribe to.' }
+  { icon: 'i-lucide-receipt', title: 'Pay per call', code: '−$0.002 USDG', text: 'After beta, each call is debited from one USDG balance. No subscriptions. Free today.' }
 ]
 </script>
 

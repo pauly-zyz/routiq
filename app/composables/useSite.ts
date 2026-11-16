@@ -3,7 +3,7 @@ export const SITE = {
   name: 'ROUTIQ',
   // Official $ROUTIQ contract. Leave empty until deployed — the UI then shows a warning instead.
   tokenAddress: '',
-  links: { x: '', discord: '', github: '', docs: '' } as Record<string, string>,
+  links: { x: '', discord: '', github: 'https://github.com/pauly-zyz/routiq', docs: '' } as Record<string, string>,
   chain: {
     chainId: '0x1237', // 4663, Robinhood Chain mainnet
     chainName: 'Robinhood Chain',

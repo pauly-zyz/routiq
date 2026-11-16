@@ -62,9 +62,11 @@ curl -s localhost:3000/mcp -X POST -H 'content-type: application/json' -H 'accep
 | `app/pages/index.vue` | Page: list of sections in order |
 | `app/components/` | One component per section (`HeroSection`, `ToolCatalog`, `PricingSection`, …) |
 | `app/data/tools.ts` | Tool catalog shown on the site (live + planned) |
-| `app/data/agentDemos.ts` | Scripted sessions shown in the hero agent console |
+| `app/components/AgentConsole.vue` | Hero console: real tool calls to `/mcp` (presets + free-text input) |
+| `app/composables/useRoutiqMcp.ts` | Browser helper that calls `/mcp` |
 | `app/composables/useSite.ts` | **Edit before launch:** token address, social links, chain details |
 | `server/routes/mcp.ts` | MCP HTTP endpoint (CORS, browser info page) |
+| `server/api/chain.get.ts` | Block + gas for the site's live widgets (CDN-cached for 2 s) |
 | `server/utils/mcpServer.ts` | Tool definitions |
 | `server/utils/chain.ts` | viem client, stock-token registry |
 | `server/utils/marketHours.ts` | US market session logic |
@@ -75,8 +77,8 @@ curl -s localhost:3000/mcp -X POST -H 'content-type: application/json' -H 'accep
 | Variable | Purpose |
 | --- | --- |
 | `NUXT_PUBLIC_SITE_URL` | Your domain, so install commands show it during prerender |
-| `NUXT_RPC_URL` | Server-side RPC for the MCP tools. Use a provider endpoint (Alchemy, QuickNode, Dwellir) in production; the public RPC is rate limited |
-| `NUXT_PUBLIC_RPC_URL` | RPC the browser uses for live block/gas on the site (must allow CORS; the public RPC does) |
+| `NUXT_RPC_URL` | Server-side RPC for the MCP tools and `/api/chain`. Use a provider endpoint (Alchemy, QuickNode, Dwellir) in production; the public RPC is rate limited. Stays on the server |
+| `NUXT_PUBLIC_RPC_URL` | RPC suggested to wallets when they add Robinhood Chain (public; default is the official public RPC) |
 
 ## Before launch
 
@@ -86,7 +88,6 @@ curl -s localhost:3000/mcp -X POST -H 'content-type: application/json' -H 'accep
 
 ## What is real vs. preview
 
-- **Real:** the MCP server and its 6 tools, wallet connect and network switch, live block / gas on the site,
-  the `chain_status` result in the hero console, the hosted `SKILL.md`.
-- **Preview (labelled on the page):** planned tools and their prices, the other hero console results,
-  the balance card, and the CLI.
+- **Real:** the MCP server and its 6 tools, the hero console (every run is a real `/mcp` call),
+  wallet connect and network switch, live block / gas on the site, the hosted `SKILL.md`.
+- **Preview (labelled on the page):** planned tools and their prices, the balance card, and the CLI.

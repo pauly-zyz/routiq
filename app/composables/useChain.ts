@@ -18,37 +18,26 @@ export function useChain() {
 
   if (import.meta.client && !started) {
     started = true
-    const rpcUrl = useRuntimeConfig().public.rpcUrl
     let fails = 0
     let timer: ReturnType<typeof setTimeout> | undefined
     let first: { block: number, at: number } | null = null
     let last: { block: number, at: number } | null = null
 
-    const rpc = async (method: string) => {
-      const res = await fetch(rpcUrl, {
-        method: 'POST',
-        headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ jsonrpc: '2.0', id: Date.now(), method, params: [] })
-      })
-      if (!res.ok) throw new Error(`RPC ${res.status}`)
-      const json = await res.json()
-      if (json.error) throw new Error(json.error.message)
-      return json.result as string
-    }
-
     const poll = async () => {
       try {
-        const [blockHex, gasHex] = await Promise.all([rpc('eth_blockNumber'), rpc('eth_gasPrice')])
-        const block = Number(BigInt(blockHex))
-        const at = performance.now()
+        // Our own endpoint (server/api/chain.get.ts): cached at the CDN, keeps any RPC key server-side.
+        const res = await fetch('/api/chain', { headers: { accept: 'application/json' } })
+        if (!res.ok) throw new Error(`chain ${res.status}`)
+        const data = await res.json() as { block: number, gasWei: string, at: number }
+        const { block, at } = data
         first ??= { block, at }
-        if (last && at > last.at) {
+        if (last && at > last.at && block !== last.block) {
           state.value.series = [...state.value.series, ((block - last.block) / (at - last.at)) * 1000].slice(-30)
         }
-        last = { block, at }
+        if (!last || at > last.at) last = { block, at }
         const seen = block - first.block
         state.value.block = block
-        state.value.gasWei = BigInt(gasHex).toString()
+        state.value.gasWei = data.gasWei
         state.value.seen = seen
         state.value.blockTimeMs = seen > 0 ? (at - first.at) / seen : null
         state.value.status = 'live'
