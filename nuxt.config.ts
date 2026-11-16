@@ -21,6 +21,8 @@ export default defineNuxtConfig({
   },
 
   runtimeConfig: {
+    // Server-only RPC for the MCP tools (set NUXT_RPC_URL to a provider endpoint in production).
+    rpcUrl: '',
     public: {
       // Public site URL, used for the install command (falls back to the browser origin).
       siteUrl: '',
@@ -36,5 +38,8 @@ export default defineNuxtConfig({
     }
   },
 
-  nitro: { prerender: { routes: ['/', '/SKILL.md'] } }
+  nitro: {
+    prerender: { routes: ['/', '/SKILL.md'] },
+    esbuild: { options: { target: 'es2022' } }
+  }
 })

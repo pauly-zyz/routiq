@@ -23,7 +23,7 @@ const statusColor = { live: 'success', beta: 'info', planned: 'neutral' } as con
     <UContainer>
       <SectionHeading eyebrow="Tool catalog">
         One registry. <span class="text-gradient">Every Robinhood Chain tool.</span>
-        <template #sub>Prices, trading, wallets, DeFi and safety checks — ranked for your agent by fit and price. Search the catalog planned for launch.</template>
+        <template #sub>Prices, trading, wallets, DeFi and safety checks — ranked for your agent by fit and price. Live tools work today through the MCP server; the rest are on the roadmap.</template>
       </SectionHeading>
 
       <div v-reveal class="mb-6 flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
@@ -74,7 +74,7 @@ const statusColor = { live: 'success', beta: 'info', planned: 'neutral' } as con
       </div>
 
       <p class="mt-6 text-center text-xs text-dimmed">
-        Planned catalog and prices. Sources are public on-chain venues and data — listing one does not imply a partnership.
+        Live tools are free during beta. Prices shown for planned tools are planned prices. Sources are public on-chain venues and data — listing one does not imply a partnership.
       </p>
     </UContainer>
   </section>

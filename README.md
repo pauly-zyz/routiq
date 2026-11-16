@@ -1,27 +1,58 @@
-# ROUTIQ — website
+# ROUTIQ
 
 ROUTIQ is a tool router for AI agents on **Robinhood Chain** (Ethereum L2 on Arbitrum Orbit, chain ID 4663).
-An agent installs one skill, then discovers, compares and pays per call for on-chain tools — stock-token prices,
-swap routes, wallets, DeFi and safety checks — from one USDG balance.
+An agent connects once, then discovers and calls on-chain tools — stock-token registry and verification,
+wallets, transactions, market hours — through one MCP server.
 
-This repo holds the marketing site.
+This repo holds the website **and** the remote MCP server (`/mcp`), deployed together on Vercel.
 
 ## Stack
 
 Same family as monid.ai:
 
-- [Nuxt 4](https://nuxt.com) (Vue 3, TypeScript) — static generation
+- [Nuxt 4](https://nuxt.com) (Vue 3, TypeScript) with its Nitro server — site pages are prerendered, `/mcp` runs as a serverless function
 - [Nuxt UI 4](https://ui.nuxt.com) components + [Tailwind CSS 4](https://tailwindcss.com)
 - [Iconify](https://iconify.design) icons via `@nuxt/icon` (Lucide + Simple Icons, bundled locally)
 - Self-hosted fonts from `@fontsource` (Inter, Space Grotesk, JetBrains Mono)
+- MCP: official [`@modelcontextprotocol/sdk`](https://github.com/modelcontextprotocol/typescript-sdk) (Streamable HTTP, stateless) + [`viem`](https://viem.sh) for chain reads
 
 ## Run it
 
 ```bash
 npm install          # .npmrc sets legacy-peer-deps (works around an npm peer-resolution bug)
-npm run dev          # http://localhost:3000
-npm run generate     # static site in .output/public — deploy to Vercel, Netlify, Cloudflare Pages…
+npm run dev          # site on http://localhost:3000, MCP server on http://localhost:3000/mcp
+npm run build        # what Vercel runs (see vercel.json) — site + serverless MCP function
 npm run typecheck
+```
+
+Do not deploy with `npm run generate`: that produces a static site without the `/mcp` endpoint.
+
+## MCP server
+
+Endpoint: `https://<your-domain>/mcp` (Streamable HTTP, stateless, JSON responses, CORS open). A browser `GET` returns a short description.
+
+| Tool | What it returns |
+| --- | --- |
+| `chain_status` | Latest block, block age, gas price, average block time |
+| `stock_tokens` | Official Robinhood stock tokens matching a ticker or name |
+| `token_verify` | Verdict for an address or ticker: official, USDG, impersonation risk, unknown |
+| `wallet_portfolio` | ETH, USDG and official stock-token balances of an address (one Multicall3 call) |
+| `tx_lookup` | Status, fee and decoded ERC-20 transfers of a transaction |
+| `market_hours` | US exchange session and next open (holiday calendar 2026–2027) |
+
+**Where the data comes from**
+
+- Everything is read from the Robinhood Chain RPC. (Blockscout's API blocks datacenter IPs, so it is not used.)
+- Official stock tokens = tokens created by the Robinhood StockFactory `0x4783C67b63dE2B358Ac5951a7D41F47A38F3C046`.
+  `server/data/stock-tokens.json` is a snapshot of its events (212 tokens); at runtime the server reads newer factory events
+  and caches the registry for 10 minutes.
+- USDG address `0x5fc5360D0400a0Fd4f2af552ADD042D716F1d168` comes from public developer docs; its name and 6 decimals were checked on-chain.
+
+Try it locally:
+
+```bash
+curl -s localhost:3000/mcp -X POST -H 'content-type: application/json' -H 'accept: application/json, text/event-stream' \
+  -d '{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"token_verify","arguments":{"symbol":"TSLA"}}}'
 ```
 
 ## Layout
@@ -30,27 +61,32 @@ npm run typecheck
 | --- | --- |
 | `app/pages/index.vue` | Page: list of sections in order |
 | `app/components/` | One component per section (`HeroSection`, `ToolCatalog`, `PricingSection`, …) |
-| `app/data/tools.ts` | Tool catalog (name, category, source, planned price, status) |
+| `app/data/tools.ts` | Tool catalog shown on the site (live + planned) |
 | `app/data/agentDemos.ts` | Scripted sessions shown in the hero agent console |
 | `app/composables/useSite.ts` | **Edit before launch:** token address, social links, chain details |
-| `app/composables/useChain.ts` | Live block / gas from the public RPC |
-| `app/composables/useWallet.ts` | EIP-1193 wallet connect + add/switch to Robinhood Chain |
-| `app/assets/css/main.css` | Theme tokens and effects (gradients, glass, border beam, reveal) |
-| `public/SKILL.md` | The skill file agents read (`set up <site>/SKILL.md`) |
+| `server/routes/mcp.ts` | MCP HTTP endpoint (CORS, browser info page) |
+| `server/utils/mcpServer.ts` | Tool definitions |
+| `server/utils/chain.ts` | viem client, stock-token registry |
+| `server/utils/marketHours.ts` | US market session logic |
+| `public/SKILL.md` | Skill file agents read; points them to `/mcp` |
+
+## Configuration
+
+| Variable | Purpose |
+| --- | --- |
+| `NUXT_PUBLIC_SITE_URL` | Your domain, so install commands show it during prerender |
+| `NUXT_RPC_URL` | Server-side RPC for the MCP tools. Use a provider endpoint (Alchemy, QuickNode, Dwellir) in production; the public RPC is rate limited |
+| `NUXT_PUBLIC_RPC_URL` | RPC the browser uses for live block/gas on the site (must allow CORS; the public RPC does) |
 
 ## Before launch
 
 - Set `SITE.tokenAddress` and `SITE.links` in `app/composables/useSite.ts`. Empty links show "Coming soon".
-- Set `NUXT_PUBLIC_SITE_URL` (e.g. `https://your-domain`) so the install command shows your domain during prerender.
-- Use a provider RPC (Alchemy, QuickNode, Dwellir) via `NUXT_PUBLIC_RPC_URL` and make sure it allows browser (CORS) requests.
-  The public RPC is rate limited. If it fails, the page shows "RPC unavailable" instead of numbers.
-- Update `public/SKILL.md` when the real API, MCP URL and CLI are published.
-- The unscoped npm name `routiq` belongs to an unrelated project (a localhost tunnel tool). Publish the CLI under
+- The unscoped npm name `routiq` belongs to an unrelated project (a localhost tunnel tool). Publish a future CLI under
   your own scope (for example `@<your-org>/routiq`) and never tell users to `npm install routiq`.
 
 ## What is real vs. preview
 
-- **Real:** wallet connect and network switch, live block / gas / measured block time, US market clock,
-  the `chain.status` result in the agent console, the hosted `SKILL.md`.
-- **Preview (labelled on the page):** the tool catalog and its prices, other agent console results,
-  the balance card, MCP and CLI. These describe the planned product.
+- **Real:** the MCP server and its 6 tools, wallet connect and network switch, live block / gas on the site,
+  the `chain_status` result in the hero console, the hosted `SKILL.md`.
+- **Preview (labelled on the page):** planned tools and their prices, the other hero console results,
+  the balance card, and the CLI.

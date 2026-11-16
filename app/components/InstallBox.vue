@@ -1,5 +1,6 @@
 <script setup lang="ts">
 const skillUrl = useSkillUrl()
+const mcpUrl = useMcpUrl()
 const copy = useCopy()
 const tab = ref<'skill' | 'mcp' | 'cli'>('skill')
 const tabs = [
@@ -29,14 +30,19 @@ const command = computed(() => `set up ${skillUrl.value}`)
         <span class="min-w-0 flex-1 truncate text-highlighted">{{ command }}</span>
         <UButton label="Copy" icon="i-lucide-copy" size="sm" class="bg-brand-gradient text-white" @click="copy(command, 'Install command copied')" />
       </template>
+      <template v-else-if="tab === 'mcp'">
+        <span class="text-cyan-300">MCP</span>
+        <span class="min-w-0 flex-1 truncate text-highlighted">{{ mcpUrl }}</span>
+        <UButton label="Copy" icon="i-lucide-copy" size="sm" class="bg-brand-gradient text-white" @click="copy(mcpUrl, 'MCP server URL copied')" />
+      </template>
       <template v-else>
         <UIcon name="i-lucide-clock" class="size-4 text-dimmed" />
-        <span class="min-w-0 flex-1 truncate text-muted">
-          {{ tab === 'mcp' ? 'Remote MCP server — URL published at early access' : 'routiq CLI — released with early access' }}
-        </span>
+        <span class="min-w-0 flex-1 truncate text-muted">routiq CLI — released with early access</span>
         <UBadge label="soon" color="neutral" variant="outline" size="sm" />
       </template>
     </div>
-    <p class="mt-2.5 text-xs text-dimmed">Your agent reads the skill and takes it from there. No per-tool sign-ups.</p>
+    <p class="mt-2.5 text-xs text-dimmed">
+      {{ tab === 'mcp' ? 'Add it as a remote MCP server (Streamable HTTP). 6 read-only tools, free during beta.' : 'Your agent reads the skill and takes it from there. No per-tool sign-ups.' }}
+    </p>
   </div>
 </template>

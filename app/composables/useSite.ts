@@ -12,15 +12,19 @@ export const SITE = {
   }
 }
 
-/** Absolute URL of the hosted SKILL.md, using the configured site URL or the current origin. */
-export function useSkillUrl() {
+/** Absolute URL for a path on this site, using the configured site URL or the current origin. */
+export function useSiteUrl(path: string) {
   const config = useRuntimeConfig()
-  const url = ref(config.public.siteUrl ? `${config.public.siteUrl.replace(/\/$/, '')}/SKILL.md` : '/SKILL.md')
+  const base = String(config.public.siteUrl || '').replace(/\/$/, '')
+  const url = ref(base ? `${base}${path}` : path)
   onMounted(() => {
-    if (!config.public.siteUrl) url.value = `${window.location.origin}/SKILL.md`
+    if (!base) url.value = `${window.location.origin}${path}`
   })
   return url
 }
+
+export const useSkillUrl = () => useSiteUrl('/SKILL.md')
+export const useMcpUrl = () => useSiteUrl('/mcp')
 
 export function useCopy() {
   const toast = useToast()

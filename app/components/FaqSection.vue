@@ -2,10 +2,10 @@
 const items = [
   { label: 'What is ROUTIQ?', content: 'A tool router for AI agents on Robinhood Chain. Your agent gets one skill, then discovers, compares and pays for on-chain tools — prices, swaps, wallets, DeFi and safety checks — per call.' },
   { label: 'Do I need API keys for each provider?', content: 'No. ROUTIQ handles access to every tool in the catalog. Your agent only needs the skill (or MCP server) and a funded balance.' },
-  { label: 'How is pricing structured?', content: 'Pay per call, no subscription. Each tool shows its price before the agent calls it, and calls are debited from one USDG balance. Prices on this page are planned prices.' },
+  { label: 'How is pricing structured?', content: 'The live MCP tools are free during the beta. Paid tools will be pay per call with no subscription: each tool shows its price before the agent calls it. Prices shown for planned tools are planned prices.' },
   { label: 'Can an agent move my funds?', content: 'Tools that move funds only build a transaction. Your wallet signs it — the agent never holds your keys. You can also set a daily spending cap per agent.' },
   { label: 'A tool failed. Am I charged?', content: 'Failed calls are not charged. You pay only for calls that return a result.' },
-  { label: 'Which agents are supported?', content: 'Any agent that can read a skill file, connect to a remote MCP server, or run a CLI. The skill works today; MCP and CLI arrive with early access.' },
+  { label: 'Which agents are supported?', content: 'Any agent or IDE that supports remote MCP servers (Streamable HTTP) can connect to /mcp today. Agents can also read the skill file. The CLI arrives later.' },
   { label: 'Is there a ROUTIQ token?', content: 'The official contract address is published only on this site and our official accounts. Never trust addresses sent in DMs.' }
 ]
 </script>

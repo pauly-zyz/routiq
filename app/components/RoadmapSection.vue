@@ -1,7 +1,7 @@
 <script setup lang="ts">
 const phases = [
-  { when: 'Now', title: 'Foundation', items: ['Website & tool catalog preview', 'Wallet + network setup', 'chain.status tool live'], now: true },
-  { when: 'Phase 2', title: 'Early access', items: ['Skill + remote MCP server', 'First trading & market tools', 'USDG balance contract'] },
+  { when: 'Now', title: 'MCP beta', items: ['Remote MCP server live', '6 read-only tools, free', 'Official stock-token registry'], now: true },
+  { when: 'Phase 2', title: 'Market tools', items: ['stock_price & stock_premium', 'route_quote across venues', 'x402 pay-per-call in USDG'] },
   { when: 'Phase 3', title: 'Open catalog', items: ['Full tool catalog', 'Provider onboarding & payouts', 'routiq CLI'] },
   { when: 'Phase 4', title: 'Agentic trading', items: ['Spending policies per agent', 'Multi-step trade flows', 'SDK for wallets & dApps'] }
 ]

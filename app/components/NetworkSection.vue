@@ -34,7 +34,7 @@ const blockText = computed(() => state.value.block ? state.value.block.toLocaleS
     <UContainer>
       <SectionHeading eyebrow="Network">
         Built on Robinhood Chain. <span class="text-gradient">Watching it live.</span>
-        <template #sub>These numbers come straight from the chain’s public RPC — the same data the <code class="font-mono text-violet-300">chain.status</code> tool returns.</template>
+        <template #sub>These numbers come straight from the chain’s public RPC — the same data the <code class="font-mono text-violet-300">chain_status</code> tool returns.</template>
       </SectionHeading>
 
       <div class="grid grid-cols-1 gap-4 md:grid-cols-4 md:grid-rows-[auto_auto_auto]">

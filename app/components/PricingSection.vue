@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { TOOLS } from '~/data/tools'
+import { LIVE_TOOLS, TOOLS } from '~/data/tools'
 
 const calls = [
-  { tool: 'route.quote', when: '2s ago', cost: 0.002 },
-  { tool: 'stock.premium', when: '41s ago', cost: 0.002 },
-  { tool: 'wallet.portfolio', when: '3m ago', cost: 0.001 },
-  { tool: 'swap.build', when: '3m ago', cost: 0.004 },
-  { tool: 'chain.status', when: '7m ago', cost: 0 }
+  { tool: 'route_quote', when: '2s ago', cost: 0.002 },
+  { tool: 'stock_premium', when: '41s ago', cost: 0.002 },
+  { tool: 'wallet_portfolio', when: '3m ago', cost: 0.001 },
+  { tool: 'swap_build', when: '3m ago', cost: 0.004 },
+  { tool: 'chain_status', when: '7m ago', cost: 0 }
 ]
 const points = [
   { icon: 'i-lucide-ban', title: 'No subscriptions', text: 'Pay only for the calls your agent makes.' },
@@ -15,8 +15,8 @@ const points = [
   { icon: 'i-lucide-pen-line', title: 'You sign trades', text: 'Tools that move funds return a transaction for your wallet to sign.' }
 ]
 const stats = [
-  { value: String(TOOLS.length), label: 'tools planned at launch' },
-  { value: '$0.001', label: 'planned starting price per call' },
+  { value: String(LIVE_TOOLS.length), label: 'tools live today, free in beta' },
+  { value: String(TOOLS.length - LIVE_TOOLS.length), label: 'more tools on the roadmap' },
   { value: '0', label: 'subscriptions to manage' }
 ]
 </script>
