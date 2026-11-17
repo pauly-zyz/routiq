@@ -42,7 +42,7 @@ const command = computed(() => `set up ${skillUrl.value}`)
       </template>
     </div>
     <p class="mt-2.5 text-xs text-dimmed">
-      {{ tab === 'mcp' ? 'Add it as a remote MCP server (Streamable HTTP). 6 read-only tools, free during beta.' : 'Your agent reads the skill and takes it from there. No per-tool sign-ups.' }}
+      {{ tab === 'mcp' ? 'Add it as a remote MCP server (Streamable HTTP). 12 tools — read data, build swaps and transfers — free during beta.' : 'Your agent reads the skill and takes it from there. No per-tool sign-ups.' }}
     </p>
   </div>
 </template>

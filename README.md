@@ -4,7 +4,7 @@ ROUTIQ is a tool router for AI agents on **Robinhood Chain** (Ethereum L2 on Arb
 An agent connects once, then discovers and calls on-chain tools — stock-token registry and verification,
 wallets, transactions, market hours — through one MCP server.
 
-This repo holds the website **and** the remote MCP server (`/mcp`), deployed together on Vercel.
+This repo holds the website, the remote MCP server (`/mcp`) and the review-and-sign page (`/sign`), deployed together on Vercel.
 
 ## Stack
 
@@ -39,6 +39,17 @@ Endpoint: `https://www.routiq.tech/mcp` (Streamable HTTP, stateless, JSON respon
 | `wallet_portfolio` | ETH, USDG and official stock-token balances of an address (one Multicall3 call) |
 | `tx_lookup` | Status, fee and decoded ERC-20 transfers of a transaction |
 | `market_hours` | US exchange session and next open (holiday calendar 2026–2027) |
+| `swap_quote` | Best Uniswap v3 route (direct or via USDG/WETH) with price impact |
+| `swap_build` | Exact-amount approval (if needed) + SwapRouter02 `multicall(deadline, …)`, simulated; returns `signUrl` |
+| `transfer_build` | ETH / ERC-20 transfer with safety checks, simulated; returns `signUrl` |
+| `approvals_check` | Allowances to Uniswap SwapRouter02, Universal Router, Permit2, v4 PositionManager (+ custom) |
+| `approval_revoke` | `approve(spender, 0)`, simulated; returns `signUrl` |
+| `tx_simulate` | `eth_simulateV1` dry run of any call: status, gas, token + native transfers |
+
+**Actions are non-custodial.** Action tools return unsigned transactions and a link to `/sign#<payload>` (base64url JSON in
+the URL fragment, expires in 15 minutes). `/sign` never trusts text from the link: `server/api/sign/inspect.post.ts`
+decodes each call and only accepts transfers/exact approvals of known tokens, revokes, and Uniswap SwapRouter02 swaps whose
+recipient is the signer, then re-simulates the whole sequence. Anything else is rejected with "Do not sign this".
 
 **Where the data comes from**
 
@@ -70,6 +81,9 @@ curl -s localhost:3000/mcp -X POST -H 'content-type: application/json' -H 'accep
 | `server/utils/mcpServer.ts` | Tool definitions |
 | `server/utils/chain.ts` | viem client, stock-token registry |
 | `server/utils/marketHours.ts` | US market session logic |
+| `server/utils/actions.ts` | Quotes, transaction builders, simulation, sign-link encoding and inspection |
+| `server/api/sign/inspect.post.ts` | Decodes + simulates a sign link for `/sign` |
+| `app/pages/sign.vue` | Review-and-sign page (wallet connect, eligibility check for stock tokens, sequential signing) |
 | `public/SKILL.md` | Skill file agents read; points them to `/mcp` |
 
 ## Configuration
@@ -88,6 +102,6 @@ curl -s localhost:3000/mcp -X POST -H 'content-type: application/json' -H 'accep
 
 ## What is real vs. preview
 
-- **Real:** the MCP server and its 6 tools, the hero console (every run is a real `/mcp` call),
+- **Real:** the MCP server and its 12 tools, the `/sign` page, the hero console (every run is a real `/mcp` call),
   wallet connect and network switch, live block / gas on the site, the hosted `SKILL.md`.
 - **Preview (labelled on the page):** planned tools and their prices, the balance card, and the CLI.

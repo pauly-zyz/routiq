@@ -24,8 +24,8 @@ const { state } = useChain()
           Every <span class="text-gradient">on-chain tool</span> your agent needs.
         </h1>
         <p class="mt-6 max-w-xl text-lg leading-relaxed text-toned">
-          One MCP server connects your AI agent to Robinhood Chain — official stock tokens, wallets,
-          transactions and market hours today, with prices, swap routes and DeFi next. Try it live in the console.
+          One MCP server lets your AI agent read Robinhood Chain and act on it — quote and build Uniswap swaps,
+          send tokens, audit approvals. You review and sign every action. Try it live in the console.
         </p>
 
         <div class="mt-9"><InstallBox /></div>
@@ -33,7 +33,7 @@ const { state } = useChain()
         <div class="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3 text-sm text-muted">
           <span class="inline-flex items-center gap-2"><UIcon name="i-lucide-key-round" class="size-4 text-violet-300" />No API keys</span>
           <span class="inline-flex items-center gap-2"><UIcon name="i-lucide-gift" class="size-4 text-violet-300" />Free during beta</span>
-          <span class="inline-flex items-center gap-2"><UIcon name="i-lucide-shield-check" class="size-4 text-violet-300" />Read-only, never moves funds</span>
+          <span class="inline-flex items-center gap-2"><UIcon name="i-lucide-pen-line" class="size-4 text-violet-300" />You sign every action</span>
         </div>
       </div>
 

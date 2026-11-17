@@ -1,9 +1,9 @@
 <script setup lang="ts">
 const items = [
-  { label: 'What is ROUTIQ?', content: 'A tool router for AI agents on Robinhood Chain. Your agent gets one skill, then discovers, compares and pays for on-chain tools — prices, swaps, wallets, DeFi and safety checks — per call.' },
+  { label: 'What is ROUTIQ?', content: 'A tool router for AI agents on Robinhood Chain. One MCP server gives your agent tools to read the chain (stock tokens, wallets, transactions, market hours) and to prepare actions (Uniswap swaps, transfers, approval revokes) that you sign yourself.' },
   { label: 'Do I need API keys for each provider?', content: 'No. ROUTIQ handles access to every tool in the catalog. Your agent only needs the skill (or MCP server) and a funded balance.' },
   { label: 'How is pricing structured?', content: 'The live MCP tools are free during the beta. Paid tools will be pay per call with no subscription: each tool shows its price before the agent calls it. Prices shown for planned tools are planned prices.' },
-  { label: 'Can an agent move my funds?', content: 'Tools that move funds only build a transaction. Your wallet signs it — the agent never holds your keys. You can also set a daily spending cap per agent.' },
+  { label: 'Can an agent move my funds?', content: 'No. Action tools only build and simulate transactions, then return a link to routiq.tech/sign. That page decodes every call itself, refuses anything outside approvals, transfers and Uniswap swaps of known tokens, and you sign in your own wallet. ROUTIQ never holds your keys.' },
   { label: 'A tool failed. Am I charged?', content: 'Failed calls are not charged. You pay only for calls that return a result.' },
   { label: 'Which agents are supported?', content: 'Any agent or IDE that supports remote MCP servers (Streamable HTTP) can connect to /mcp today. Agents can also read the skill file. The CLI arrives later.' },
   { label: 'Is there a ROUTIQ token?', content: 'The official contract address is published only on this site and our official accounts. Never trust addresses sent in DMs.' }

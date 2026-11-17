@@ -1,11 +1,13 @@
-// ROUTIQ MCP server: read-only tools for Robinhood Chain. Free during beta.
+// ROUTIQ MCP server: read tools and action tools for Robinhood Chain. Free during beta.
+// Action tools never send anything: they return unsigned transactions and a /sign link for the user's own wallet.
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js'
 import { formatEther, formatGwei, formatUnits, getAddress, isAddress, isHash, type Address } from 'viem'
 import { z } from 'zod'
 import { USDG, STOCK_FACTORY, chainClient, erc20Abi, explorerAddress, explorerTx, stockTokens } from './chain'
 import { marketStatus } from './marketHours'
+import { UserError, buildRevoke, buildSwap, buildTransfer, checkApprovals, simulateArbitrary, swapQuote } from './actions'
 
-export const SERVER_INFO = { name: 'routiq', version: '0.1.0' }
+export const SERVER_INFO = { name: 'routiq', version: '0.2.0' }
 
 export const TOOL_SUMMARY = [
   { name: 'chain_status', description: 'Latest block, gas price and average block time on Robinhood Chain.' },
@@ -13,7 +15,13 @@ export const TOOL_SUMMARY = [
   { name: 'token_verify', description: 'Check whether a token address or ticker is an official Robinhood stock token, or a look-alike.' },
   { name: 'wallet_portfolio', description: 'ETH, USDG and stock-token balances held by an address.' },
   { name: 'tx_lookup', description: 'Status, fee and decoded token transfers of a transaction.' },
-  { name: 'market_hours', description: 'Whether the US stock exchange is open, and when it opens next.' }
+  { name: 'market_hours', description: 'Whether the US stock exchange is open, and when it opens next.' },
+  { name: 'swap_quote', description: 'Best Uniswap price for swapping ETH, USDG and stock tokens, with price impact.' },
+  { name: 'swap_build', description: 'Build and simulate a swap; returns a sign link for the user\'s wallet.' },
+  { name: 'transfer_build', description: 'Build and simulate sending ETH, USDG or a stock token; returns a sign link.' },
+  { name: 'approvals_check', description: 'List token approvals a wallet has given to Uniswap contracts (and others you name).' },
+  { name: 'approval_revoke', description: 'Build a transaction that revokes a token approval; returns a sign link.' },
+  { name: 'tx_simulate', description: 'Simulate any transaction before signing: success, gas and token transfers.' }
 ]
 
 const READ_ONLY = { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: true } as const
@@ -23,6 +31,7 @@ const trim = (s: string, dp = 6) => (s.includes('.') ? s.replace(new RegExp(`(\\
 
 async function withChain<T>(fn: () => Promise<T>) {
   try { return await fn() } catch (err: any) {
+    if (err instanceof UserError) return fail(err.message) as T
     const msg = String(err?.shortMessage || err?.message || err)
     return fail(`Robinhood Chain RPC request failed: ${msg.slice(0, 300)}. Try again in a few seconds.`) as T
   }
@@ -31,7 +40,8 @@ async function withChain<T>(fn: () => Promise<T>) {
 export function createRoutiqServer() {
   const server = new McpServer(SERVER_INFO, {
     instructions: [
-      'ROUTIQ gives read-only access to Robinhood Chain (Ethereum L2 on Arbitrum Orbit, chain ID 4663, gas in ETH).',
+      'ROUTIQ gives agents tools for Robinhood Chain (Ethereum L2 on Arbitrum Orbit, chain ID 4663, gas in ETH).',
+      'Action tools (swap_build, transfer_build, approval_revoke) never send anything: they simulate the transactions and return a signUrl. Give the user the signUrl so they can review and sign in their own wallet; never claim an action happened until the user confirms.',
       'Use stock_tokens / token_verify before trusting any stock-token address: only tokens created by the Robinhood StockFactory are official.',
       'Amounts are token units, not USD. Never ask for private keys. Stock-token eligibility depends on the user\'s jurisdiction; do not help bypass it.'
     ].join(' ')
@@ -222,6 +232,79 @@ export function createRoutiqServer() {
     if (Number.isNaN(d.getTime())) return fail('Invalid time. Use ISO format, e.g. 2026-12-24T18:00:00Z.')
     return json(marketStatus(d))
   })
+
+  // ---------------- Action tools ----------------
+  const ACTION = { readOnlyHint: true, destructiveHint: false, idempotentHint: false, openWorldHint: true } as const
+  const addr = z.string().describe('0x address')
+
+  server.registerTool('swap_quote', {
+    title: 'Swap quote',
+    description: 'Best price on Uniswap (Robinhood Chain) to swap between ETH, WETH, USDG and official Robinhood stock tokens. Tries direct pools and routes via USDG or WETH. Returns expected output and price impact. Read-only.',
+    inputSchema: {
+      sell: z.string().describe('Asset to sell: "ETH", "USDG", a stock ticker like "TSLA", or a token address.'),
+      buy: z.string().describe('Asset to buy, same format.'),
+      amount: z.string().describe('Amount of the sell asset in token units, e.g. "100" or "0.25".')
+    },
+    annotations: READ_ONLY
+  }, ({ sell, buy, amount }) => withChain(async () => json((await swapQuote(sell, buy, amount)).summary)))
+
+  server.registerTool('swap_build', {
+    title: 'Build a swap',
+    description: 'Build a Uniswap swap for the user on Robinhood Chain: adds an exact-amount approval if needed, sets a minimum output from the slippage limit, simulates everything, and returns a signUrl the user opens to review and sign in their own wallet. Nothing is sent by this tool. Stock-token swaps are only for users eligible in their jurisdiction.',
+    inputSchema: {
+      from: addr.describe('The user\'s wallet address (will sign and receive).'),
+      sell: z.string().describe('Asset to sell: "ETH", "USDG", a stock ticker or token address.'),
+      buy: z.string().describe('Asset to buy.'),
+      amount: z.string().describe('Amount of the sell asset in token units.'),
+      slippageBps: z.number().int().min(1).max(500).optional().describe('Max slippage in basis points (default 50 = 0.5%).')
+    },
+    annotations: ACTION
+  }, (args) => withChain(async () => json(await buildSwap(args))))
+
+  server.registerTool('transfer_build', {
+    title: 'Build a transfer',
+    description: 'Build a transfer of ETH, USDG or an official stock token from the user to a recipient. Checks balance, blocks sending to token contracts or the zero address, warns if the recipient is a contract, simulates, and returns a signUrl. Nothing is sent by this tool.',
+    inputSchema: {
+      from: addr.describe('Sender (the user\'s wallet).'),
+      to: addr.describe('Recipient address.'),
+      asset: z.string().describe('"ETH", "USDG", a stock ticker or token address.'),
+      amount: z.string().describe('Amount in token units.')
+    },
+    annotations: ACTION
+  }, (args) => withChain(async () => json(await buildTransfer(args))))
+
+  server.registerTool('approvals_check', {
+    title: 'Check approvals',
+    description: 'List open token approvals (allowances) a wallet has given to Uniswap contracts, plus any extra spender addresses you pass. Flags unlimited approvals. Read-only.',
+    inputSchema: {
+      address: addr.describe('Wallet to check.'),
+      spenders: z.array(z.string()).max(10).optional().describe('Extra spender contract addresses to check.')
+    },
+    annotations: READ_ONLY
+  }, ({ address, spenders }) => withChain(async () => json(await checkApprovals(address, spenders ?? []))))
+
+  server.registerTool('approval_revoke', {
+    title: 'Revoke an approval',
+    description: 'Build a transaction that sets a token approval to zero, simulate it, and return a signUrl. Nothing is sent by this tool.',
+    inputSchema: {
+      from: addr.describe('Wallet that gave the approval.'),
+      token: z.string().describe('Token ticker or address (USDG, WETH or a stock token).'),
+      spender: addr.describe('Contract that holds the approval.')
+    },
+    annotations: ACTION
+  }, (args) => withChain(async () => json(await buildRevoke(args))))
+
+  server.registerTool('tx_simulate', {
+    title: 'Simulate a transaction',
+    description: 'Simulate any transaction on Robinhood Chain without sending it: success or revert reason, gas used and decoded token transfers. Use before signing anything unfamiliar.',
+    inputSchema: {
+      from: addr.describe('Sender address.'),
+      to: addr.describe('Target contract or wallet.'),
+      data: z.string().optional().describe('Calldata (0x…). Omit for a plain ETH transfer.'),
+      value: z.string().optional().describe('ETH value in wei (integer string).')
+    },
+    annotations: READ_ONLY
+  }, (args) => withChain(async () => json(await simulateArbitrary(args))))
 
   return server
 }

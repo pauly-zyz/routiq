@@ -63,6 +63,12 @@ function summarize(tool: string, r: any): { kind: Kind, text: string }[] {
       if (h.length > 4) out.push({ kind: 'note', text: `+${h.length - 4} more` })
       return out
     }
+    case 'swap_quote':
+      return [
+        { kind: 'result', text: `${r.sell} → ${r.buy}` },
+        { kind: 'note', text: `${r.inversePrice} · impact ${r.priceImpactPct ?? '?'}% · ${r.route}` },
+        { kind: 'note', text: 'swap_build turns this into a sign link for your wallet' }
+      ]
     case 'tx_lookup':
       return [
         { kind: r.status === 'success' ? 'result' : 'warn', text: `${r.status} · block ${num(r.block, 0)} · fee ${r.feeEth} ETH` },
@@ -113,6 +119,7 @@ const PRESETS: { label: string, icon: string, plan: () => Plan | null }[] = [
   { label: 'Market open?', icon: 'i-lucide-clock', plan: () => ({ prompt: 'Is the US stock market open right now?', discover: 'us market hours', tool: 'market_hours', args: {} }) },
   { label: 'Verify TSLA', icon: 'i-lucide-badge-check', plan: () => ({ prompt: 'Which TSLA token is the official one?', discover: 'verify stock token', tool: 'token_verify', args: { symbol: 'TSLA' } }) },
   { label: 'Find NVIDIA', icon: 'i-lucide-search', plan: () => ({ prompt: 'Find the NVIDIA stock token', discover: 'stock token registry', tool: 'stock_tokens', args: { query: 'nvidia', limit: 3 } }) },
+  { label: 'Quote 100 USDG → TSLA', icon: 'i-lucide-route', plan: () => ({ prompt: 'How much TSLA do I get for 100 USDG?', discover: 'best swap price', tool: 'swap_quote', args: { sell: 'USDG', buy: 'TSLA', amount: '100' } }) },
   { label: 'Chain status', icon: 'i-lucide-activity', plan: () => ({ prompt: 'Check Robinhood Chain before I trade', discover: 'chain gas status', tool: 'chain_status', args: {} }) },
   {
     label: 'My wallet', icon: 'i-lucide-wallet',

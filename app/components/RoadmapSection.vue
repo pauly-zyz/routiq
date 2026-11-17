@@ -1,9 +1,9 @@
 <script setup lang="ts">
 const phases = [
-  { when: 'Now', title: 'MCP beta', items: ['Remote MCP server live', '6 read-only tools, free', 'Official stock-token registry'], now: true },
-  { when: 'Phase 2', title: 'Market tools', items: ['stock_price & stock_premium', 'route_quote across venues', 'x402 pay-per-call in USDG'] },
+  { when: 'Now', title: 'Read + act', items: ['12 MCP tools live, free', 'Uniswap swaps & transfers', 'Review-and-sign links'], now: true },
+  { when: 'Phase 2', title: 'Markets & yield', items: ['stock_price & stock_premium', 'USDG lending & bridging', 'x402 pay-per-call in USDG'] },
   { when: 'Phase 3', title: 'Open catalog', items: ['Full tool catalog', 'Provider onboarding & payouts', 'routiq CLI'] },
-  { when: 'Phase 4', title: 'Agentic trading', items: ['Spending policies per agent', 'Multi-step trade flows', 'SDK for wallets & dApps'] }
+  { when: 'Phase 4', title: 'Agentic trading', items: ['Session keys with spend caps', 'DCA & limit orders', 'SDK for wallets & dApps'] }
 ]
 </script>
 
