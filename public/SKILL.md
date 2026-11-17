@@ -9,11 +9,10 @@ ROUTIQ is a tool router for AI agents on **Robinhood Chain** (Ethereum L2 on Arb
 
 ## Connect
 
-The remote MCP server lives at **`/mcp` on the same host you fetched this file from**
-(for example, if this file is `https://example.com/SKILL.md`, the server is `https://example.com/mcp`).
+The remote MCP server is at **`https://www.routiq.tech/mcp`** (website: https://www.routiq.tech).
 
 - Transport: MCP Streamable HTTP, stateless, JSON responses. No API key during beta.
-- MCP client config: `{ "mcpServers": { "routiq": { "url": "https://<host>/mcp" } } }`
+- MCP client config: `{ "mcpServers": { "routiq": { "url": "https://www.routiq.tech/mcp" } } }`
 - A plain `GET /mcp` returns a short JSON description of the server and its tools.
 
 ## Tools (all read-only, free during beta)

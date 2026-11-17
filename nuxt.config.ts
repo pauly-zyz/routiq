@@ -24,8 +24,8 @@ export default defineNuxtConfig({
     // Server-only RPC for the MCP tools (set NUXT_RPC_URL to a provider endpoint in production).
     rpcUrl: '',
     public: {
-      // Public site URL, used for the install command (falls back to the browser origin).
-      siteUrl: '',
+      // Public site URL: install commands, MCP URL and SEO tags. Override with NUXT_PUBLIC_SITE_URL.
+      siteUrl: 'https://www.routiq.tech',
       rpcUrl: 'https://rpc.mainnet.chain.robinhood.com'
     }
   },

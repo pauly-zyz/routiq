@@ -29,7 +29,7 @@ Do not deploy with `npm run generate`: that produces a static site without the `
 
 ## MCP server
 
-Endpoint: `https://<your-domain>/mcp` (Streamable HTTP, stateless, JSON responses, CORS open). A browser `GET` returns a short description.
+Endpoint: `https://www.routiq.tech/mcp` (Streamable HTTP, stateless, JSON responses, CORS open). A browser `GET` returns a short description.
 
 | Tool | What it returns |
 | --- | --- |
@@ -76,7 +76,7 @@ curl -s localhost:3000/mcp -X POST -H 'content-type: application/json' -H 'accep
 
 | Variable | Purpose |
 | --- | --- |
-| `NUXT_PUBLIC_SITE_URL` | Your domain, so install commands show it during prerender |
+| `NUXT_PUBLIC_SITE_URL` | Site URL for install commands, MCP URL and SEO tags. Defaults to `https://www.routiq.tech` |
 | `NUXT_RPC_URL` | Server-side RPC for the MCP tools and `/api/chain`. Use a provider endpoint (Alchemy, QuickNode, Dwellir) in production; the public RPC is rate limited. Stays on the server |
 | `NUXT_PUBLIC_RPC_URL` | RPC suggested to wallets when they add Robinhood Chain (public; default is the official public RPC) |
 
