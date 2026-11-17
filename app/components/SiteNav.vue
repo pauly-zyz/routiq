@@ -33,7 +33,6 @@ onBeforeUnmount(() => window.removeEventListener('scroll', onScroll))
 
       <div class="flex items-center gap-1">
         <UButton class="hidden sm:inline-flex" icon="i-simple-icons-x" color="neutral" variant="ghost" aria-label="X" @click="openLink('x')" />
-        <UButton class="hidden sm:inline-flex" icon="i-simple-icons-github" color="neutral" variant="ghost" aria-label="GitHub" @click="openLink('github')" />
         <UButton
           :label="label"
           :loading="busy"

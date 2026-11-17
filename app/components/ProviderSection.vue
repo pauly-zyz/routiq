@@ -17,7 +17,7 @@ const steps = [
             <span class="font-mono text-xs uppercase tracking-[.16em] text-cyan-300">For tool providers</span>
             <h2 class="mt-4 font-display text-4xl font-semibold leading-tight tracking-tight text-highlighted sm:text-5xl">Sell your tool to <span class="text-gradient">every agent</span> on the chain.</h2>
             <p class="mt-4 text-muted">Run a DEX, an oracle, a data API or a vault? List it once and every ROUTIQ agent can find it and pay for it.</p>
-            <UButton label="Become a provider" trailing-icon="i-lucide-arrow-right" size="lg" class="mt-8 bg-brand-gradient text-white" @click="openLink('github')" />
+            <UButton label="Become a provider" trailing-icon="i-lucide-arrow-right" size="lg" class="mt-8 bg-brand-gradient text-white" @click="openLink('providers')" />
           </div>
           <ol class="grid gap-3">
             <li v-for="(s, i) in steps" :key="s.title" v-reveal="i * 100" class="glass flex items-start gap-4 rounded-2xl p-5">

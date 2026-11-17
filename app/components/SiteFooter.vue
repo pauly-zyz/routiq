@@ -21,7 +21,7 @@ const openLink = useExternalLink()
         </div>
         <div>
           <h4 class="mb-4 font-mono text-xs uppercase tracking-widest text-dimmed">Community</h4>
-          <ul class="space-y-2.5 text-sm text-toned"><li v-for="k in ['x', 'discord', 'github']" :key="k"><button type="button" class="cursor-pointer capitalize hover:text-highlighted" @click="openLink(k)">{{ k === 'x' ? 'X' : k === 'github' ? 'GitHub' : 'Discord' }}</button></li></ul>
+          <ul class="space-y-2.5 text-sm text-toned"><li v-for="k in ['x', 'discord']" :key="k"><button type="button" class="cursor-pointer hover:text-highlighted" @click="openLink(k)">{{ k === 'x' ? 'X' : 'Discord' }}</button></li></ul>
         </div>
       </div>
     </UContainer>

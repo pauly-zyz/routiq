@@ -66,7 +66,7 @@ const statusColor = { live: 'success', beta: 'info', planned: 'neutral' } as con
 
       <div v-if="!filtered.length" class="glass rounded-2xl p-10 text-center text-muted">
         No tool matches “{{ query }}”.
-        <UButton label="Suggest it" variant="link" @click="openLink('github')" />
+        <UButton label="Suggest it" variant="link" @click="openLink('providers')" />
       </div>
 
       <div v-if="shown.length < filtered.length" class="mt-8 text-center">
