@@ -26,7 +26,7 @@ const copy = useCopy()
           Every <span class="text-gradient">on-chain tool</span> your agent needs.
         </h1>
         <p class="mt-6 max-w-xl text-lg leading-relaxed text-toned">
-          One MCP server lets your AI agent read Robinhood Chain and act on it — quote and build Uniswap swaps,
+          One MCP server lets your AI agent read Robinhood Chain and act on it — best-price swaps across Uniswap v3 and v4,
           send tokens, audit approvals. You review and sign every action. Try it live in the console.
         </p>
 

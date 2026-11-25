@@ -39,8 +39,8 @@ Endpoint: `https://www.routiq.tech/mcp` (Streamable HTTP, stateless, JSON respon
 | `wallet_portfolio` | ETH, USDG and official stock-token balances of an address (one Multicall3 call) |
 | `tx_lookup` | Status, fee and decoded ERC-20 transfers of a transaction |
 | `market_hours` | US exchange session and next open (holiday calendar 2026–2027) |
-| `swap_quote` | Best Uniswap v3 route (direct or via USDG/WETH) with price impact |
-| `swap_build` | Exact-amount approval (if needed) + SwapRouter02 `multicall(deadline, …)`, simulated; returns `signUrl` |
+| `swap_quote` | Best route across Uniswap v3 (direct or via USDG/WETH) and v4 (hookless pools, direct or via ETH/USDG), with price impact |
+| `swap_build` | v3: exact approval + SwapRouter02 `multicall(deadline, …)`. v4: exact approval to Permit2 + 30-min Permit2 allowance + Universal Router `V4_SWAP`. Simulated; returns `signUrl` |
 | `transfer_build` | ETH / ERC-20 transfer with safety checks, simulated; returns `signUrl` |
 | `approvals_check` | Allowances to Uniswap SwapRouter02, Universal Router, Permit2, v4 PositionManager (+ custom) |
 | `approval_revoke` | `approve(spender, 0)`, simulated; returns `signUrl` |
@@ -48,12 +48,15 @@ Endpoint: `https://www.routiq.tech/mcp` (Streamable HTTP, stateless, JSON respon
 
 **Actions are non-custodial.** Action tools return unsigned transactions and a link to `/sign#<payload>` (base64url JSON in
 the URL fragment, expires in 15 minutes). `/sign` never trusts text from the link: `server/api/sign/inspect.post.ts`
-decodes each call and only accepts transfers/exact approvals of known tokens, revokes, and Uniswap SwapRouter02 swaps whose
-recipient is the signer, then re-simulates the whole sequence. Anything else is rejected with "Do not sign this".
+decodes each call and only accepts transfers/exact approvals of known tokens, revokes, short-lived Permit2 allowances to the
+Universal Router, SwapRouter02 swaps whose recipient is the signer, and single-command `V4_SWAP` calls (exact-in, SETTLE_ALL,
+TAKE_ALL — output always goes to the signer, hookless pools only), then re-simulates the whole sequence. Anything else is rejected with "Do not sign this".
 
 **Where the data comes from**
 
 - Everything is read from the Robinhood Chain RPC. (Blockscout's API blocks datacenter IPs, so it is not used.)
+- Uniswap v4 pools: `server/data/v4-pools.json` lists hookless pools with fee ≤ 1% between supported assets that had liquidity
+  at scan time (434 of ~1.18M v4 pools). Refresh it with `node scripts/scan-v4-pools.mjs` (optionally pass a provider RPC URL).
 - Official stock tokens = tokens created by the Robinhood StockFactory `0x4783C67b63dE2B358Ac5951a7D41F47A38F3C046`.
   `server/data/stock-tokens.json` is a snapshot of its events (212 tokens); at runtime the server reads newer factory events
   and caches the registry for 10 minutes.

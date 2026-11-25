@@ -25,7 +25,7 @@ The remote MCP server is at **`https://www.routiq.tech/mcp`** (website: https://
 | `wallet_portfolio` | ETH, USDG and official stock-token balances of an `address` |
 | `tx_lookup` | Status, fee and decoded token transfers of a transaction `hash` |
 | `market_hours` | Whether the US exchange is in regular session, pre-market, after-hours or closed, and the next open |
-| `swap_quote` | Best Uniswap v3 price between ETH, WETH, USDG and stock tokens (`sell`, `buy`, `amount`) with price impact |
+| `swap_quote` | Best price across Uniswap v3 and v4 (hookless pools) between ETH, WETH, USDG, ROUTIQ and stock tokens (`sell`, `buy`, `amount`), with price impact and the other version's quote |
 | `approvals_check` | Open token approvals of an `address` to Uniswap contracts (and extra `spenders`) |
 | `tx_simulate` | Dry-run any transaction (`from`, `to`, `data`, `value`): success, gas, token transfers |
 
@@ -36,7 +36,7 @@ These never send anything. They check balances, simulate on-chain, and return `t
 
 | Tool | Builds |
 | --- | --- |
-| `swap_build` | Uniswap swap (`from`, `sell`, `buy`, `amount`, optional `slippageBps`, default 50). Adds an exact-amount approval if needed |
+| `swap_build` | Best Uniswap v3 or v4 swap (`from`, `sell`, `buy`, `amount`, optional `slippageBps`, default 50). Adds exact-amount approvals (v3: SwapRouter02; v4: Permit2 + a 30-minute Universal Router allowance) only when needed |
 | `transfer_build` | Send ETH, USDG or a stock token (`from`, `to`, `asset`, `amount`). Refuses token-contract and zero-address recipients |
 | `approval_revoke` | Set a token approval to zero (`from`, `token`, `spender`) |
 

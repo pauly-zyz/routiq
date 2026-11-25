@@ -142,7 +142,7 @@ const stateText: Record<StepState, string> = { idle: '', wallet: 'Confirm in you
       <div v-else-if="info && !info.ok" class="mt-10 rounded-3xl border border-red-500/40 bg-red-500/10 p-8">
         <div class="flex items-center gap-3 text-red-300"><UIcon name="i-lucide-shield-x" class="size-6" /><h2 class="font-display text-xl font-semibold">Do not sign this</h2></div>
         <p class="mt-3 text-red-200/90">{{ info.error }}</p>
-        <p class="mt-2 text-sm text-red-200/70">ROUTIQ only signs approvals, transfers and Uniswap swaps it can fully decode. This link is outside that list.</p>
+        <p class="mt-2 text-sm text-red-200/70">ROUTIQ only signs exact approvals, short-lived Permit2 allowances, transfers and Uniswap v3/v4 swaps it can fully decode. This link is outside that list.</p>
       </div>
 
       <!-- review -->

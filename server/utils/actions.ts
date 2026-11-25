@@ -1,10 +1,11 @@
 // ROUTIQ action tools: quotes and unsigned transactions for Robinhood Chain.
 // ROUTIQ never holds keys. Every action is returned as transactions + a /sign link the user signs in their own wallet.
 import {
-  concatHex, decodeFunctionData, encodeFunctionData, encodePacked, formatUnits, getAddress, isAddress, maxUint256,
-  parseUnits, type Address, type Hex
+  concatHex, decodeAbiParameters, decodeFunctionData, encodeAbiParameters, encodeFunctionData, encodePacked, formatUnits,
+  getAddress, isAddress, maxUint256, parseUnits, type Address, type Hex
 } from 'viem'
-import { USDG, chainClient, erc20Abi, stockTokens } from './chain'
+import { ROUTIQ_TOKEN, USDG, chainClient, erc20Abi, stockTokens } from './chain'
+import v4Snapshot from '../data/v4-pools.json'
 
 // ---------- Contracts (Uniswap's official Robinhood Chain deployments, checked on-chain) ----------
 export const UNI = {
@@ -13,8 +14,10 @@ export const UNI = {
   swapRouter02: getAddress('0xcaf681a66d020601342297493863e78c959e5cb2'),
   universalRouter: getAddress('0x8876789976decbfcbbbe364623c63652db8c0904'),
   permit2: getAddress('0x000000000022D473030F116dDEE9F6B43aC78BA3'),
-  v4PositionManager: getAddress('0x58daec3116aae6d93017baaea7749052e8a04fa7')
+  v4PositionManager: getAddress('0x58daec3116aae6d93017baaea7749052e8a04fa7'),
+  v4Quoter: getAddress('0x8dc178efb8111bb0973dd9d722ebeff267c98f94')
 }
+const ZERO = '0x0000000000000000000000000000000000000000' as Address // native ETH in Uniswap v4
 export const WETH = { symbol: 'WETH', name: 'Wrapped Ether', address: getAddress('0x0bd7d308f8e1639fab988df18a8011f41eacad73'), decimals: 18 }
 const ROUTER_SELF = getAddress('0x0000000000000000000000000000000000000002') // SwapRouter02 "ADDRESS_THIS"
 const FEES = [500, 3000, 10000, 100] as const
@@ -24,6 +27,7 @@ const SPENDER_NAMES: Record<string, string> = {
   [UNI.permit2]: 'Uniswap Permit2',
   [UNI.v4PositionManager]: 'Uniswap v4 PositionManager'
 }
+const PERMIT2_MAX = 2n ** 159n
 export const spenderName = (a: string) => SPENDER_NAMES[getAddress(a)] ?? null
 
 // ---------- ABIs (quoter functions are marked view so they can be batched through eth_call) ----------
@@ -39,6 +43,27 @@ export const routerAbi = [
   { type: 'function', name: 'unwrapWETH9', stateMutability: 'payable', inputs: [{ name: 'amountMinimum', type: 'uint256' }, { name: 'recipient', type: 'address' }], outputs: [] }
 ] as const
 
+const poolKeyTuple = { type: 'tuple', components: [{ name: 'currency0', type: 'address' }, { name: 'currency1', type: 'address' }, { name: 'fee', type: 'uint24' }, { name: 'tickSpacing', type: 'int24' }, { name: 'hooks', type: 'address' }] } as const
+const pathKeyArray = { type: 'tuple[]', components: [{ name: 'intermediateCurrency', type: 'address' }, { name: 'fee', type: 'uint24' }, { name: 'tickSpacing', type: 'int24' }, { name: 'hooks', type: 'address' }, { name: 'hookData', type: 'bytes' }] } as const
+const v4QuoterAbi = [
+  { type: 'function', name: 'quoteExactInputSingle', stateMutability: 'view', inputs: [{ name: 'params', type: 'tuple', components: [{ name: 'poolKey', ...poolKeyTuple }, { name: 'zeroForOne', type: 'bool' }, { name: 'exactAmount', type: 'uint128' }, { name: 'hookData', type: 'bytes' }] }], outputs: [{ name: 'amountOut', type: 'uint256' }, { name: 'gasEstimate', type: 'uint256' }] },
+  { type: 'function', name: 'quoteExactInput', stateMutability: 'view', inputs: [{ name: 'params', type: 'tuple', components: [{ name: 'exactCurrency', type: 'address' }, { name: 'path', ...pathKeyArray }, { name: 'exactAmount', type: 'uint128' }] }], outputs: [{ name: 'amountOut', type: 'uint256' }, { name: 'gasEstimate', type: 'uint256' }] }
+] as const
+export const universalRouterAbi = [
+  { type: 'function', name: 'execute', stateMutability: 'payable', inputs: [{ name: 'commands', type: 'bytes' }, { name: 'inputs', type: 'bytes[]' }, { name: 'deadline', type: 'uint256' }], outputs: [] }
+] as const
+export const permit2Abi = [
+  { type: 'function', name: 'approve', stateMutability: 'nonpayable', inputs: [{ name: 'token', type: 'address' }, { name: 'spender', type: 'address' }, { name: 'amount', type: 'uint160' }, { name: 'expiration', type: 'uint48' }], outputs: [] },
+  { type: 'function', name: 'allowance', stateMutability: 'view', inputs: [{ name: 'user', type: 'address' }, { name: 'token', type: 'address' }, { name: 'spender', type: 'address' }], outputs: [{ name: 'amount', type: 'uint160' }, { name: 'expiration', type: 'uint48' }, { name: 'nonce', type: 'uint48' }] }
+] as const
+// Universal Router V4_SWAP layouts used by the deployed router (verified by simulation on Robinhood Chain).
+const V4_SINGLE = [{ type: 'tuple', components: [{ name: 'poolKey', ...poolKeyTuple }, { name: 'zeroForOne', type: 'bool' }, { name: 'amountIn', type: 'uint128' }, { name: 'amountOutMinimum', type: 'uint128' }, { name: 'minHopPriceX36', type: 'uint256' }, { name: 'hookData', type: 'bytes' }] }] as const
+const V4_MULTI = [{ type: 'tuple', components: [{ name: 'currencyIn', type: 'address' }, { name: 'path', ...pathKeyArray }, { name: 'maxHopSlippage', type: 'uint256[]' }, { name: 'amountIn', type: 'uint128' }, { name: 'amountOutMinimum', type: 'uint128' }] }] as const
+const CUR_AMOUNT = [{ type: 'address' }, { type: 'uint256' }] as const
+const V4_SWAP = '0x10'
+const ACT_SINGLE = '0x060c0f' // SWAP_EXACT_IN_SINGLE, SETTLE_ALL, TAKE_ALL
+const ACT_MULTI = '0x070c0f'  // SWAP_EXACT_IN, SETTLE_ALL, TAKE_ALL
+
 export const tokenWriteAbi = [
   { type: 'function', name: 'approve', stateMutability: 'nonpayable', inputs: [{ name: 'spender', type: 'address' }, { name: 'amount', type: 'uint256' }], outputs: [{ type: 'bool' }] },
   { type: 'function', name: 'transfer', stateMutability: 'nonpayable', inputs: [{ name: 'to', type: 'address' }, { name: 'amount', type: 'uint256' }], outputs: [{ type: 'bool' }] },
@@ -46,7 +71,7 @@ export const tokenWriteAbi = [
 ] as const
 
 // ---------- Tokens ----------
-export interface Asset { symbol: string, name: string, address: Address, decimals: number, kind: 'native' | 'stablecoin' | 'wrapped' | 'stock_token' }
+export interface Asset { symbol: string, name: string, address: Address, decimals: number, kind: 'native' | 'stablecoin' | 'wrapped' | 'stock_token' | 'project' }
 const ETH: Asset = { symbol: 'ETH', name: 'Ether', address: WETH.address, decimals: 18, kind: 'native' }
 
 /** Assets the action tools may touch: ETH, WETH, USDG and official Robinhood stock tokens. */
@@ -55,6 +80,7 @@ export async function knownAssets(): Promise<Asset[]> {
   return [
     { ...USDG, kind: 'stablecoin' },
     { ...WETH, kind: 'wrapped' },
+    { ...ROUTIQ_TOKEN, kind: 'project' },
     ...reg.tokens.map(t => ({ ...t, decimals: 18, kind: 'stock_token' as const }))
   ]
 }
@@ -66,7 +92,7 @@ export async function resolveAsset(input: string): Promise<Asset> {
   const hit = isAddress(q)
     ? assets.find(a => a.address === getAddress(q))
     : assets.find(a => a.symbol.toUpperCase() === q.toUpperCase())
-  if (!hit) throw new UserError(`"${input}" is not supported. Use ETH, WETH, USDG or an official Robinhood stock token (see stock_tokens).`)
+  if (!hit) throw new UserError(`"${input}" is not supported. Use ETH, WETH, USDG, ROUTIQ or an official Robinhood stock token (see stock_tokens).`)
   return hit
 }
 
@@ -95,12 +121,35 @@ async function balanceOf(owner: Address, asset: Asset) {
 }
 
 // ---------- Quotes ----------
-interface Route { kind: 'single' | 'multi', tokens: Address[], fees: number[], amountOut: bigint, gasEstimate: bigint }
+interface PathKey { intermediateCurrency: Address, fee: number, tickSpacing: number, hooks: Address, hookData: Hex }
+interface PoolKey { currency0: Address, currency1: Address, fee: number, tickSpacing: number, hooks: Address }
+interface Route {
+  version: 'v3' | 'v4'
+  kind: 'single' | 'multi'
+  tokens: Address[] // display path (v4 uses ZERO for native ETH)
+  fees: number[]
+  amountOut: bigint
+  v4?: { key?: PoolKey, zeroForOne?: boolean, currencyIn: Address, path?: PathKey[] }
+}
 
 const pathOf = (tokens: Address[], fees: number[]) =>
   concatHex(tokens.flatMap((t, i) => (i < fees.length ? [t, encodePacked(['uint24'], [fees[i]!])] : [t])) as Hex[])
 
-async function bestRoute(tokenIn: Address, tokenOut: Address, amountIn: bigint): Promise<Route | null> {
+// v4 pool index from the snapshot (hookless, fee <= 1%), deepest pools first.
+const V4_POOLS = new Map<string, { fee: number, tickSpacing: number, liquidity: bigint }[]>()
+for (const [c0, c1, fee, ts, liq] of v4Snapshot.pools as [string, string, number, number, string][]) {
+  const k = `${c0}|${c1}`
+  if (!V4_POOLS.has(k)) V4_POOLS.set(k, [])
+  V4_POOLS.get(k)!.push({ fee, tickSpacing: ts, liquidity: BigInt(liq) })
+}
+const sortPair = (a: Address, b: Address): [Address, Address] => (a.toLowerCase() < b.toLowerCase() ? [a, b] : [b, a])
+const v4PoolsFor = (a: Address, b: Address, limit: number) => {
+  const [c0, c1] = sortPair(a, b)
+  return (V4_POOLS.get(`${c0.toLowerCase()}|${c1.toLowerCase()}`) ?? []).slice(0, limit).map(p => ({ ...p, c0: getAddress(c0), c1: getAddress(c1) }))
+}
+const v4Currency = (a: Asset): Address => (a.kind === 'native' ? ZERO : a.address)
+
+async function bestV3(tokenIn: Address, tokenOut: Address, amountIn: bigint): Promise<Route | null> {
   const c = chainClient()
   const singles = FEES.map(fee => ({ tokens: [tokenIn, tokenOut], fees: [fee] }))
   const hubs = [USDG.address, WETH.address].filter(h => h !== tokenIn && h !== tokenOut)
@@ -115,25 +164,75 @@ async function bestRoute(tokenIn: Address, tokenOut: Address, amountIn: bigint):
   let best: Route | null = null
   res.forEach((r, i) => {
     if (r.status !== 'success') return
-    const [amountOut, , , gasEstimate] = r.result as readonly [bigint, unknown, unknown, bigint]
+    const amountOut = (r.result as readonly [bigint, ...unknown[]])[0]
     const cand = candidates[i]!
-    if (amountOut > 0n && (!best || amountOut > best.amountOut)) {
-      best = { kind: cand.fees.length === 1 ? 'single' : 'multi', tokens: cand.tokens, fees: cand.fees, amountOut, gasEstimate }
+    if (amountOut > 0n && (!best || amountOut > best.amountOut)) best = { version: 'v3', kind: cand.fees.length === 1 ? 'single' : 'multi', tokens: cand.tokens, fees: cand.fees, amountOut }
+  })
+  return best
+}
+
+async function bestV4(cin: Address, cout: Address, amountIn: bigint): Promise<Route | null> {
+  if (amountIn >= 2n ** 128n) return null
+  const singles = v4PoolsFor(cin, cout, 6).map(p => ({ kind: 'single' as const, p }))
+  const hubs = [ZERO, USDG.address].filter(h => h !== cin && h !== cout)
+  const multis = hubs.flatMap(h => v4PoolsFor(cin, h, 3).flatMap(a => v4PoolsFor(h, cout, 3).map(b => ({ kind: 'multi' as const, h, a, b }))))
+  if (!singles.length && !multis.length) return null
+  const res = await chainClient().multicall({
+    allowFailure: true,
+    contracts: [
+      ...singles.map(({ p }) => ({
+        address: UNI.v4Quoter, abi: v4QuoterAbi, functionName: 'quoteExactInputSingle' as const,
+        args: [{ poolKey: { currency0: p.c0, currency1: p.c1, fee: p.fee, tickSpacing: p.tickSpacing, hooks: ZERO }, zeroForOne: p.c0 === cin, exactAmount: amountIn, hookData: '0x' as Hex }] as const
+      })),
+      ...multis.map(m => ({
+        address: UNI.v4Quoter, abi: v4QuoterAbi, functionName: 'quoteExactInput' as const,
+        args: [{ exactCurrency: cin, exactAmount: amountIn, path: [
+          { intermediateCurrency: m.h, fee: m.a.fee, tickSpacing: m.a.tickSpacing, hooks: ZERO, hookData: '0x' as Hex },
+          { intermediateCurrency: cout, fee: m.b.fee, tickSpacing: m.b.tickSpacing, hooks: ZERO, hookData: '0x' as Hex }
+        ] }] as const
+      }))
+    ]
+  })
+  let best: Route | null = null
+  res.forEach((r, i) => {
+    if (r.status !== 'success') return
+    const amountOut = (r.result as readonly [bigint, bigint])[0]
+    if (amountOut <= 0n || (best && amountOut <= best.amountOut)) return
+    if (i < singles.length) {
+      const p = singles[i]!.p
+      best = { version: 'v4', kind: 'single', tokens: [cin, cout], fees: [p.fee], amountOut, v4: { currencyIn: cin, key: { currency0: p.c0, currency1: p.c1, fee: p.fee, tickSpacing: p.tickSpacing, hooks: ZERO }, zeroForOne: p.c0 === cin } }
+    } else {
+      const m = multis[i - singles.length]!
+      best = { version: 'v4', kind: 'multi', tokens: [cin, m.h, cout], fees: [m.a.fee, m.b.fee], amountOut, v4: { currencyIn: cin, path: [
+        { intermediateCurrency: m.h, fee: m.a.fee, tickSpacing: m.a.tickSpacing, hooks: ZERO, hookData: '0x' },
+        { intermediateCurrency: cout, fee: m.b.fee, tickSpacing: m.b.tickSpacing, hooks: ZERO, hookData: '0x' }
+      ] } }
     }
   })
   return best
 }
 
+/** Best of Uniswap v3 and v4 (hookless pools only). */
+async function bestRoute(tin: Asset, tout: Asset, amountIn: bigint) {
+  const [v3, v4] = await Promise.all([
+    bestV3(tin.address, tout.address, amountIn).catch(() => null),
+    bestV4(v4Currency(tin), v4Currency(tout), amountIn).catch(() => null)
+  ])
+  const best = !v3 ? v4 : !v4 ? v3 : (v4.amountOut > v3.amountOut ? v4 : v3)
+  return { best, v3, v4 }
+}
+
 export async function swapQuote(tokenInInput: string, tokenOutInput: string, amountInput: string) {
   const tin = await resolveAsset(tokenInInput)
   const tout = await resolveAsset(tokenOutInput)
-  if (tin.address === tout.address) throw new UserError('Pick two different assets (ETH and WETH count as the same).')
+  if (tin.address === tout.address && tin.kind === tout.kind) throw new UserError('Pick two different assets.')
+  if ((tin.kind === 'native' && tout.kind === 'wrapped') || (tin.kind === 'wrapped' && tout.kind === 'native')) throw new UserError('ETH ↔ WETH is a wrap, not a swap. Pick another pair.')
   const amountIn = parseAmount(amountInput, tin)
-  const route = await bestRoute(tin.address, tout.address, amountIn)
-  if (!route) throw new UserError(`No Uniswap v3 liquidity found for ${tin.symbol} → ${tout.symbol}.`)
-  // Price impact: compare with a quote for 1/1000 of the size along the same route.
+  const { best: route, v3, v4 } = await bestRoute(tin, tout, amountIn)
+  if (!route) throw new UserError(`No Uniswap liquidity found for ${tin.symbol} → ${tout.symbol}.`)
+  // Price impact: compare with a quote for 1/1000 of the size.
   const small = amountIn / 1000n > 0n ? amountIn / 1000n : 1n
-  const ref = await bestRoute(tin.address, tout.address, small)
+  const ref = (await bestRoute(tin, tout, small)).best
   let impactPct: number | null = null
   if (ref && ref.amountOut > 0n) {
     const refRate = Number(ref.amountOut) / Number(small)
@@ -141,9 +240,14 @@ export async function swapQuote(tokenInInput: string, tokenOutInput: string, amo
     impactPct = Math.max(0, (1 - rate / refRate) * 100)
   }
   const assets = await knownAssets()
-  const sym = (a: Address) => (a === WETH.address ? (a === tin.address && tin.kind === 'native' ? 'ETH' : a === tout.address && tout.kind === 'native' ? 'ETH' : 'WETH') : assets.find(x => x.address === a)?.symbol ?? short(a))
+  const sym = (a: Address) => {
+    if (a === ZERO) return 'ETH'
+    if (a === WETH.address) return (a === tin.address && tin.kind === 'native') || (a === tout.address && tout.kind === 'native') ? 'ETH' : 'WETH'
+    return assets.find(x => x.address === a)?.symbol ?? short(a)
+  }
   const outHuman = Number(formatUnits(route.amountOut, tout.decimals))
   const inHuman = Number(formatUnits(amountIn, tin.decimals))
+  const other = route === v4 ? v3 : v4
   return {
     tin, tout, amountIn, route,
     summary: {
@@ -154,7 +258,8 @@ export async function swapQuote(tokenInInput: string, tokenOutInput: string, amo
       priceImpactPct: impactPct === null ? null : Number(impactPct.toFixed(3)),
       route: route.tokens.map(sym).join(' → '),
       poolFees: route.fees.map(f => `${f / 10_000}%`),
-      venue: 'Uniswap v3 on Robinhood Chain'
+      venue: `Uniswap ${route.version} on Robinhood Chain`,
+      comparedWith: other ? `Uniswap ${other.version}: ${fmt(other.amountOut, tout.decimals)} ${tout.symbol}` : `no Uniswap ${route.version === 'v3' ? 'v4' : 'v3'} route`
     }
   }
 }
@@ -215,26 +320,48 @@ export async function buildSwap(opts: { from: string, sell: string, buy: string,
 
   const minOut = route.amountOut * BigInt(10_000 - slippageBps) / 10_000n
   const ethOut = tout.kind === 'native'
-  const recipient = ethOut ? ROUTER_SELF : from
-  const inner: Hex[] = [route.kind === 'single'
-    ? encodeFunctionData({ abi: routerAbi, functionName: 'exactInputSingle', args: [{ tokenIn: route.tokens[0]!, tokenOut: route.tokens[1]!, fee: route.fees[0]!, recipient, amountIn, amountOutMinimum: minOut, sqrtPriceLimitX96: 0n }] })
-    : encodeFunctionData({ abi: routerAbi, functionName: 'exactInput', args: [{ path: pathOf(route.tokens, route.fees), recipient, amountIn, amountOutMinimum: minOut }] })]
-  if (ethOut) inner.push(encodeFunctionData({ abi: routerAbi, functionName: 'unwrapWETH9', args: [minOut, from] }))
   const deadline = BigInt(Math.floor(Date.now() / 1000) + 20 * 60)
-
+  const swapLabel = `Swap ${fmt(amountIn, tin.decimals)} ${tin.symbol} → at least ${fmt(minOut, tout.decimals)} ${tout.symbol} on Uniswap ${route.version}`
+  const c = chainClient()
   const txs: Tx[] = []
-  if (tin.kind !== 'native') {
-    const allowance = await chainClient().readContract({ address: tin.address, abi: tokenWriteAbi, functionName: 'allowance', args: [from, UNI.swapRouter02] })
-    if (allowance < amountIn) {
-      txs.push({ to: tin.address, data: encodeFunctionData({ abi: tokenWriteAbi, functionName: 'approve', args: [UNI.swapRouter02, amountIn] }), value: '0', label: `Approve ${fmt(amountIn, tin.decimals)} ${tin.symbol} for Uniswap SwapRouter02 (exact amount)` })
+
+  if (route.version === 'v3') {
+    const recipient = ethOut ? ROUTER_SELF : from
+    const inner: Hex[] = [route.kind === 'single'
+      ? encodeFunctionData({ abi: routerAbi, functionName: 'exactInputSingle', args: [{ tokenIn: route.tokens[0]!, tokenOut: route.tokens[1]!, fee: route.fees[0]!, recipient, amountIn, amountOutMinimum: minOut, sqrtPriceLimitX96: 0n }] })
+      : encodeFunctionData({ abi: routerAbi, functionName: 'exactInput', args: [{ path: pathOf(route.tokens, route.fees), recipient, amountIn, amountOutMinimum: minOut }] })]
+    if (ethOut) inner.push(encodeFunctionData({ abi: routerAbi, functionName: 'unwrapWETH9', args: [minOut, from] }))
+    if (tin.kind !== 'native') {
+      const allowance = await c.readContract({ address: tin.address, abi: tokenWriteAbi, functionName: 'allowance', args: [from, UNI.swapRouter02] })
+      if (allowance < amountIn) txs.push({ to: tin.address, data: encodeFunctionData({ abi: tokenWriteAbi, functionName: 'approve', args: [UNI.swapRouter02, amountIn] }), value: '0', label: `Approve ${fmt(amountIn, tin.decimals)} ${tin.symbol} for Uniswap SwapRouter02 (exact amount)` })
     }
+    txs.push({ to: UNI.swapRouter02, data: encodeFunctionData({ abi: routerAbi, functionName: 'multicall', args: [deadline, inner] }), value: tin.kind === 'native' ? amountIn.toString() : '0', label: swapLabel })
+  } else {
+    const v4 = route.v4!
+    const cin = v4.currencyIn
+    const cout = route.tokens[route.tokens.length - 1]!
+    const swapParams = route.kind === 'single'
+      ? encodeAbiParameters(V4_SINGLE, [{ poolKey: v4.key!, zeroForOne: v4.zeroForOne!, amountIn, amountOutMinimum: minOut, minHopPriceX36: 0n, hookData: '0x' }])
+      : encodeAbiParameters(V4_MULTI, [{ currencyIn: cin, path: v4.path!, maxHopSlippage: [], amountIn, amountOutMinimum: minOut }])
+    const input = encodeAbiParameters([{ type: 'bytes' }, { type: 'bytes[]' }], [
+      route.kind === 'single' ? ACT_SINGLE : ACT_MULTI,
+      [swapParams, encodeAbiParameters(CUR_AMOUNT, [cin, amountIn]), encodeAbiParameters(CUR_AMOUNT, [cout, minOut])]
+    ])
+    if (tin.kind !== 'native') {
+      // Universal Router pulls tokens through Permit2: exact ERC-20 approval to Permit2, then a short-lived Permit2 allowance.
+      const [erc20Allowance, p2] = await Promise.all([
+        c.readContract({ address: tin.address, abi: tokenWriteAbi, functionName: 'allowance', args: [from, UNI.permit2] }),
+        c.readContract({ address: UNI.permit2, abi: permit2Abi, functionName: 'allowance', args: [from, tin.address, UNI.universalRouter] })
+      ])
+      if (erc20Allowance < amountIn) txs.push({ to: tin.address, data: encodeFunctionData({ abi: tokenWriteAbi, functionName: 'approve', args: [UNI.permit2, amountIn] }), value: '0', label: `Approve ${fmt(amountIn, tin.decimals)} ${tin.symbol} for Uniswap Permit2 (exact amount)` })
+      const now = Math.floor(Date.now() / 1000)
+      if (p2[0] < amountIn || p2[1] < now + 60) {
+        const expiration = now + 30 * 60
+        txs.push({ to: UNI.permit2, data: encodeFunctionData({ abi: permit2Abi, functionName: 'approve', args: [tin.address, UNI.universalRouter, amountIn, expiration] }), value: '0', label: `Let Uniswap Universal Router use ${fmt(amountIn, tin.decimals)} ${tin.symbol} via Permit2 (expires in 30 min)` })
+      }
+    }
+    txs.push({ to: UNI.universalRouter, data: encodeFunctionData({ abi: universalRouterAbi, functionName: 'execute', args: [V4_SWAP, [input], deadline] }), value: tin.kind === 'native' ? amountIn.toString() : '0', label: swapLabel })
   }
-  txs.push({
-    to: UNI.swapRouter02,
-    data: encodeFunctionData({ abi: routerAbi, functionName: 'multicall', args: [deadline, inner] }),
-    value: tin.kind === 'native' ? amountIn.toString() : '0',
-    label: `Swap ${fmt(amountIn, tin.decimals)} ${tin.symbol} → at least ${fmt(minOut, tout.decimals)} ${tout.symbol} on Uniswap`
-  })
 
   const sim = await simulate(from, txs)
   // Amount actually received in the simulation.
@@ -371,7 +498,7 @@ export async function simulateArbitrary(opts: { from: string, to: string, data?:
 // The sign page never trusts text from the link. It decodes each call itself and only accepts the actions ROUTIQ builds.
 export async function inspectPayload(raw: unknown) {
   const p = raw as { v?: number, c?: number, f?: string, e?: number, t?: [string, string, string][] }
-  if (!p || p.v !== 1 || p.c !== 4663 || !p.f || !Array.isArray(p.t) || !p.t.length || p.t.length > 4) throw new UserError('This link is malformed.')
+  if (!p || p.v !== 1 || p.c !== 4663 || !p.f || !Array.isArray(p.t) || !p.t.length || p.t.length > 5) throw new UserError('This link is malformed.')
   const from = requireAddress(p.f, 'from')
   const expired = typeof p.e === 'number' && p.e * 1000 < Date.now()
   const assets = await knownAssets()
@@ -400,9 +527,51 @@ export async function inspectPayload(raw: unknown) {
       } else if (d.functionName === 'approve') {
         const [spender, amt] = d.args as [Address, bigint]
         if (amt === 0n) steps.push({ title: `Revoke ${token.symbol} approval`, detail: `for ${spenderName(spender) ?? spender}` })
-        else if (spender === UNI.swapRouter02 && amt < maxUint256 / 2n) steps.push({ title: `Approve ${fmt(amt, token.decimals)} ${token.symbol}`, detail: 'for Uniswap SwapRouter02 — exact amount only' })
+        else if ((spender === UNI.swapRouter02 || spender === UNI.permit2) && amt < maxUint256 / 2n) steps.push({ title: `Approve ${fmt(amt, token.decimals)} ${token.symbol}`, detail: `for ${spenderName(spender)} — exact amount only` })
         else throw new UserError('This link asks for a token approval ROUTIQ never creates.')
       } else throw new UserError('This link contains a call ROUTIQ does not build.')
+    } else if (to === UNI.permit2) {
+      if (value !== 0n) throw new UserError('Unexpected ETH value on a Permit2 call.')
+      const d = decodeFunctionData({ abi: permit2Abi, data })
+      if (d.functionName !== 'approve') throw new UserError('Unexpected Permit2 call.')
+      const [tok, spender, amt, expiration] = d.args as [Address, Address, bigint, number]
+      const t = byAddr.get(getAddress(tok))
+      if (!t || getAddress(spender) !== UNI.universalRouter) throw new UserError('This link asks for a Permit2 allowance ROUTIQ never creates.')
+      if (amt === 0n) steps.push({ title: `Revoke ${t.symbol} Permit2 allowance`, detail: 'for Uniswap Universal Router' })
+      else {
+        if (amt >= PERMIT2_MAX || Number(expiration) > Math.floor(Date.now() / 1000) + 86_400) throw new UserError('This link asks for an unlimited or long-lived Permit2 allowance.')
+        steps.push({ title: `Allow ${fmt(amt, t.decimals)} ${t.symbol} for Uniswap Universal Router`, detail: `via Permit2 · expires ${new Date(Number(expiration) * 1000).toISOString().slice(11, 16)} UTC` })
+      }
+      if (t.kind === 'stock_token') involvesStockToken = true
+    } else if (to === UNI.universalRouter) {
+      const outer = decodeFunctionData({ abi: universalRouterAbi, data })
+      const [commands, inputs, deadline] = outer.args as [Hex, Hex[], bigint]
+      if (commands.toLowerCase() !== V4_SWAP || inputs.length !== 1) throw new UserError('This router call does more than a single v4 swap.')
+      const [actions, params] = decodeAbiParameters([{ type: 'bytes' }, { type: 'bytes[]' }], inputs[0]!) as [Hex, Hex[]]
+      const act = actions.toLowerCase()
+      if ((act !== ACT_SINGLE && act !== ACT_MULTI) || params.length !== 3) throw new UserError('This v4 swap uses actions ROUTIQ does not build.')
+      let cin: Address, cout: Address, amountIn: bigint, minOut: bigint
+      const cur = (a: Address) => (getAddress(a) === ZERO ? { symbol: 'ETH', decimals: 18, kind: 'native' } : byAddr.get(getAddress(a)))
+      if (act === ACT_SINGLE) {
+        const [sp] = decodeAbiParameters(V4_SINGLE, params[0]!) as any
+        if (getAddress(sp.poolKey.hooks) !== ZERO) throw new UserError('This swap uses a pool with hooks.')
+        cin = getAddress(sp.zeroForOne ? sp.poolKey.currency0 : sp.poolKey.currency1)
+        cout = getAddress(sp.zeroForOne ? sp.poolKey.currency1 : sp.poolKey.currency0)
+        amountIn = sp.amountIn; minOut = sp.amountOutMinimum
+      } else {
+        const [mp] = decodeAbiParameters(V4_MULTI, params[0]!) as any
+        if (mp.path.length < 1 || mp.path.length > 3 || mp.path.some((k: any) => getAddress(k.hooks) !== ZERO || !cur(k.intermediateCurrency))) throw new UserError('This swap routes through an unsupported pool.')
+        cin = getAddress(mp.currencyIn); cout = getAddress(mp.path[mp.path.length - 1].intermediateCurrency)
+        amountIn = mp.amountIn; minOut = mp.amountOutMinimum
+      }
+      const [settleCur, settleAmt] = decodeAbiParameters(CUR_AMOUNT, params[1]!) as [Address, bigint]
+      const [takeCur, takeMin] = decodeAbiParameters(CUR_AMOUNT, params[2]!) as [Address, bigint]
+      const ti = cur(cin), tt = cur(cout)
+      if (!ti || !tt) throw new UserError('This swap uses a token ROUTIQ does not support.')
+      if (getAddress(settleCur) !== cin || settleAmt !== amountIn || getAddress(takeCur) !== cout || takeMin !== minOut) throw new UserError('This swap does not pay or receive what it claims.')
+      if (cin === ZERO ? value !== amountIn : value !== 0n) throw new UserError('ETH sent does not match the swap amount.')
+      if (ti.kind === 'stock_token' || tt.kind === 'stock_token') involvesStockToken = true
+      steps.push({ title: `Swap ${fmt(amountIn, ti.decimals)} ${ti.symbol} → at least ${fmt(minOut, tt.decimals)} ${tt.symbol}`, detail: `Uniswap v4 · paid to your wallet · deadline ${new Date(Number(deadline) * 1000).toISOString().slice(11, 16)} UTC` })
     } else if (to === UNI.swapRouter02) {
       const outer = decodeFunctionData({ abi: routerAbi, data })
       if (outer.functionName !== 'multicall') throw new UserError('Unexpected router call.')
