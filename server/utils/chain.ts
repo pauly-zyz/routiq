@@ -20,6 +20,9 @@ const TOKEN_CREATED_TOPIC = '0xd9b0c6a1c0de228715ad0fa09f3259686ee84f8cc675e03ef
 // USDG (Global Dollar). Address from public developer docs; name/decimals checked on-chain.
 export const USDG = { symbol: 'USDG', name: 'Global Dollar', address: getAddress('0x5fc5360D0400a0Fd4f2af552ADD042D716F1d168'), decimals: 6 }
 
+// Official $ROUTIQ token (name/symbol/decimals checked on-chain).
+export const ROUTIQ_TOKEN = { symbol: 'ROUTIQ', name: 'Routiq', address: getAddress('0x3d58fdb1665cd386b5c96efb48a466022d8121e6'), decimals: 18 }
+
 export const erc20Abi = [
   { type: 'function', name: 'balanceOf', stateMutability: 'view', inputs: [{ name: 'a', type: 'address' }], outputs: [{ type: 'uint256' }] },
   { type: 'function', name: 'decimals', stateMutability: 'view', inputs: [], outputs: [{ type: 'uint8' }] },

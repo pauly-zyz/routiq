@@ -2,9 +2,9 @@
 export const SITE = {
   name: 'ROUTIQ',
   // Official $ROUTIQ contract. Leave empty until deployed — the UI then shows a warning instead.
-  tokenAddress: '',
+  tokenAddress: '0x3d58fdb1665cd386b5c96efb48a466022d8121e6',
   // `providers`: where tool providers apply (a form or email link). Empty = "Coming soon".
-  links: { x: '', discord: '', providers: '', docs: '' } as Record<string, string>,
+  links: { x: 'https://x.com/UseRoutiq', discord: '', providers: '', docs: '' } as Record<string, string>,
   chain: {
     chainId: '0x1237', // 4663, Robinhood Chain mainnet
     chainName: 'Robinhood Chain',

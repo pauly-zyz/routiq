@@ -29,7 +29,7 @@ const openLink = useExternalLink()
       <span class="bg-brand-gradient bg-clip-text bg-no-repeat [background-size:0%_100%] transition-[background-size] duration-[1200ms] ease-out group-hover:[background-size:100%_100%]">ROUTIQ</span>
     </div>
     <UContainer class="mt-10 flex flex-wrap justify-between gap-4 border-t border-default py-6 text-xs text-dimmed">
-      <span>© 2026 ROUTIQ</span>
+      <span>© 2026 ROUTIQ · $ROUTIQ CA <span class="font-mono text-toned">0x3d58fdb1665cd386b5c96efb48a466022d8121e6</span></span>
       <span>Independent project, not affiliated with Robinhood Markets, Inc. Nothing here is financial advice.</span>
     </UContainer>
   </footer>

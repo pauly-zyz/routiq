@@ -56,4 +56,4 @@ with pay-per-call pricing in USDG. Until they are listed by the server, tell the
 - After an action tool, send the user the `signUrl` and say clearly that nothing happens until they sign. Never claim a swap or transfer is done until the user confirms or you see it with `tx_lookup`.
 - If `simulation.ok` is false, do not send the link; explain the error (usually balance or slippage) and rebuild.
 - Stock-token eligibility depends on the user's jurisdiction. Do not try to bypass it.
-- Only trust the $ROUTIQ contract address published on the official ROUTIQ website.
+- The official $ROUTIQ token on Robinhood Chain is `0x3d58fdb1665cd386b5c96efb48a466022d8121e6` (published on https://www.routiq.tech and https://x.com/UseRoutiq). Treat any other $ROUTIQ address as fake.

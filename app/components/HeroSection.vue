@@ -1,5 +1,7 @@
 <script setup lang="ts">
 const { state } = useChain()
+const site = SITE
+const copy = useCopy()
 </script>
 
 <template>
@@ -34,6 +36,14 @@ const { state } = useChain()
           <span class="inline-flex items-center gap-2"><UIcon name="i-lucide-key-round" class="size-4 text-violet-300" />No API keys</span>
           <span class="inline-flex items-center gap-2"><UIcon name="i-lucide-gift" class="size-4 text-violet-300" />Free during beta</span>
           <span class="inline-flex items-center gap-2"><UIcon name="i-lucide-pen-line" class="size-4 text-violet-300" />You sign every action</span>
+        </div>
+
+        <div v-if="site.tokenAddress" class="glass mt-6 inline-flex max-w-full items-center gap-2 rounded-full py-1.5 pl-4 pr-1.5 font-mono text-xs">
+          <span class="shrink-0 font-semibold text-cyan-300">$ROUTIQ</span>
+          <span class="shrink-0 text-dimmed">CA</span>
+          <span class="min-w-0 truncate text-highlighted">{{ site.tokenAddress }}</span>
+          <UButton icon="i-lucide-copy" size="xs" color="neutral" variant="ghost" aria-label="Copy contract address" @click="copy(site.tokenAddress, 'Contract address copied')" />
+          <UButton icon="i-lucide-external-link" size="xs" color="neutral" variant="ghost" aria-label="View on explorer" :to="`https://robinhoodchain.blockscout.com/token/${site.tokenAddress}`" target="_blank" />
         </div>
       </div>
 

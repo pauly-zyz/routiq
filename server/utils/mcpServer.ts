@@ -3,7 +3,7 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js'
 import { formatEther, formatGwei, formatUnits, getAddress, isAddress, isHash, type Address } from 'viem'
 import { z } from 'zod'
-import { USDG, STOCK_FACTORY, chainClient, erc20Abi, explorerAddress, explorerTx, stockTokens } from './chain'
+import { ROUTIQ_TOKEN, USDG, STOCK_FACTORY, chainClient, erc20Abi, explorerAddress, explorerTx, stockTokens } from './chain'
 import { marketStatus } from './marketHours'
 import { UserError, buildRevoke, buildSwap, buildTransfer, checkApprovals, simulateArbitrary, swapQuote } from './actions'
 
@@ -110,6 +110,7 @@ export function createRoutiqServer() {
     if (!address) {
       const s = symbol!.trim().toUpperCase()
       if (s === 'USDG') return json({ verdict: 'known_stablecoin', ...USDG, note: 'Address from public developer docs; name and decimals confirmed on-chain.' })
+      if (s === 'ROUTIQ') return json({ verdict: 'official_routiq_token', ...ROUTIQ_TOKEN, explorer: explorerAddress(ROUTIQ_TOKEN.address), warning: 'Any other contract using the ROUTIQ ticker is fake.' })
       const hits = reg.tokens.filter(t => t.symbol.toUpperCase() === s)
       return json(hits.length
         ? { verdict: 'official_stock_token', symbol: s, official: hits.map(t => ({ ...t, explorer: explorerAddress(t.address) })), warning: 'Any other contract using this ticker is NOT an official Robinhood stock token.' }
@@ -121,6 +122,7 @@ export function createRoutiqServer() {
     const official = reg.tokens.find(t => t.address === addr)
     if (official) return json({ verdict: 'official_stock_token', ...official, decimals: 18, explorer: explorerAddress(addr) })
     if (addr === USDG.address) return json({ verdict: 'known_stablecoin', ...USDG, explorer: explorerAddress(addr) })
+    if (addr === ROUTIQ_TOKEN.address) return json({ verdict: 'official_routiq_token', ...ROUTIQ_TOKEN, explorer: explorerAddress(addr) })
 
     const c = chainClient()
     const code = await c.getCode({ address: addr })
@@ -134,14 +136,15 @@ export function createRoutiqServer() {
     const tokenSymbol = sym.status === 'success' ? String(sym.result) : null
     const lookalike = reg.tokens.find(t => tokenSymbol && t.symbol.toUpperCase() === tokenSymbol.toUpperCase())
     const claimsRobinhood = !!tokenName && /robinhood/i.test(tokenName)
-    const risky = !!lookalike || claimsRobinhood || tokenSymbol?.toUpperCase() === 'USDG'
+    const fakeRoutiq = tokenSymbol?.toUpperCase() === 'ROUTIQ' || /routiq/i.test(tokenName ?? '')
+    const risky = !!lookalike || claimsRobinhood || fakeRoutiq || tokenSymbol?.toUpperCase() === 'USDG'
     return json({
       verdict: risky ? 'impersonation_risk' : 'unknown_token',
       address: addr,
       name: tokenName,
       symbol: tokenSymbol,
       decimals: decimals.status === 'success' ? Number(decimals.result) : null,
-      officialAddressForThisTicker: lookalike?.address ?? (tokenSymbol?.toUpperCase() === 'USDG' ? USDG.address : null),
+      officialAddressForThisTicker: lookalike?.address ?? (tokenSymbol?.toUpperCase() === 'USDG' ? USDG.address : fakeRoutiq ? ROUTIQ_TOKEN.address : null),
       note: risky
         ? 'This contract uses an official ticker or the Robinhood name but is NOT created by the Robinhood StockFactory. Do not treat it as the real asset.'
         : 'Not a Robinhood stock token. ROUTIQ cannot vouch for it.',

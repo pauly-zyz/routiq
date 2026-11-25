@@ -6,7 +6,7 @@ const items = [
   { label: 'Can an agent move my funds?', content: 'No. Action tools only build and simulate transactions, then return a link to routiq.tech/sign. That page decodes every call itself, refuses anything outside approvals, transfers and Uniswap swaps of known tokens, and you sign in your own wallet. ROUTIQ never holds your keys.' },
   { label: 'A tool failed. Am I charged?', content: 'Failed calls are not charged. You pay only for calls that return a result.' },
   { label: 'Which agents are supported?', content: 'Any agent or IDE that supports remote MCP servers (Streamable HTTP) can connect to /mcp today. Agents can also read the skill file. The CLI arrives later.' },
-  { label: 'Is there a ROUTIQ token?', content: 'The official contract address is published only on this site and our official accounts. Never trust addresses sent in DMs.' }
+  { label: 'Is there a ROUTIQ token?', content: 'Yes. The official $ROUTIQ contract on Robinhood Chain is 0x3d58fdb1665cd386b5c96efb48a466022d8121e6. It is published only on this site and @UseRoutiq on X. Never trust addresses sent in DMs — check any address with the token_verify tool.' }
 ]
 </script>
 
