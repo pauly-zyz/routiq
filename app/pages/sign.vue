@@ -106,8 +106,8 @@ const stateText: Record<StepState, string> = { idle: '', wallet: 'Confirm in you
   <div class="relative min-h-screen overflow-hidden">
     <div class="absolute inset-0 -z-10">
       <div class="bg-grid absolute inset-0" />
-      <div class="aurora left-[-10%] top-[-20%] h-[480px] w-[480px] bg-violet-600/30" />
-      <div class="aurora right-[-10%] top-[30%] h-[420px] w-[420px] bg-cyan-500/20 [animation-delay:-8s]" />
+      <div class="aurora left-[-10%] top-[-20%] h-[480px] w-[480px] bg-teal-500/30" />
+      <div class="aurora right-[-10%] top-[30%] h-[420px] w-[420px] bg-emerald-400/20 [animation-delay:-8s]" />
     </div>
 
     <header class="mx-auto flex h-20 max-w-3xl items-center justify-between px-5">
@@ -116,13 +116,13 @@ const stateText: Record<StepState, string> = { idle: '', wallet: 'Confirm in you
         :label="account ? short : 'Connect wallet'"
         :leading-icon="account ? (chainOk ? 'i-lucide-circle-check' : 'i-lucide-triangle-alert') : 'i-lucide-wallet'"
         :color="account ? 'neutral' : 'primary'" :variant="account ? 'subtle' : 'solid'"
-        :class="account ? 'font-mono' : 'bg-brand-gradient text-white'"
+        :class="account ? 'font-mono' : 'bg-brand-gradient text-[#04201C]'"
         @click="connect"
       />
     </header>
 
     <main class="mx-auto max-w-3xl px-5 pb-24 pt-6">
-      <span class="font-mono text-xs uppercase tracking-[.16em] text-cyan-300">Review &amp; sign</span>
+      <span class="font-mono text-xs uppercase tracking-[.16em] text-teal-300">Review &amp; sign</span>
       <h1 class="mt-3 font-display text-4xl font-semibold tracking-tight text-highlighted sm:text-5xl">Check before you sign.</h1>
       <p class="mt-3 max-w-xl text-muted">Your agent prepared this with ROUTIQ. Nothing happens until you approve it in your own wallet — ROUTIQ never holds your keys.</p>
 
@@ -135,7 +135,7 @@ const stateText: Record<StepState, string> = { idle: '', wallet: 'Confirm in you
 
       <!-- loading -->
       <div v-else-if="loading" class="glass mt-10 flex items-center gap-3 rounded-3xl p-8 text-muted">
-        <UIcon name="i-lucide-loader-circle" class="size-5 animate-spin text-cyan-300" />Decoding and simulating on Robinhood Chain…
+        <UIcon name="i-lucide-loader-circle" class="size-5 animate-spin text-teal-300" />Decoding and simulating on Robinhood Chain…
       </div>
 
       <!-- rejected link -->
@@ -157,17 +157,17 @@ const stateText: Record<StepState, string> = { idle: '', wallet: 'Confirm in you
 
           <ol class="mt-6 space-y-3">
             <li v-for="(s, i) in info.steps" :key="i" class="flex gap-4 rounded-2xl border border-default bg-black/20 p-4">
-              <span class="grid size-8 shrink-0 place-items-center rounded-xl bg-white/5 font-mono text-sm text-violet-300">{{ i + 1 }}</span>
+              <span class="grid size-8 shrink-0 place-items-center rounded-xl bg-white/5 font-mono text-sm text-teal-200">{{ i + 1 }}</span>
               <div class="min-w-0 flex-1">
                 <div class="font-medium text-highlighted">{{ s.title }}</div>
                 <div class="mt-0.5 break-all text-sm text-muted">{{ s.detail }}</div>
                 <div class="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs">
                   <span v-if="info.simulation?.steps[i]?.ok" class="inline-flex items-center gap-1 text-emerald-300"><UIcon name="i-lucide-flask-conical" class="size-3.5" />Simulation passed</span>
                   <span v-else class="inline-flex items-center gap-1 text-red-300"><UIcon name="i-lucide-flask-conical" class="size-3.5" />Simulation failed{{ info.simulation?.steps[i]?.error ? `: ${info.simulation.steps[i]!.error}` : '' }}</span>
-                  <span v-if="states[i] !== 'idle'" :class="['inline-flex items-center gap-1', states[i] === 'done' ? 'text-emerald-300' : states[i] === 'failed' ? 'text-red-300' : 'text-cyan-300']">
+                  <span v-if="states[i] !== 'idle'" :class="['inline-flex items-center gap-1', states[i] === 'done' ? 'text-emerald-300' : states[i] === 'failed' ? 'text-red-300' : 'text-teal-300']">
                     <UIcon :name="stateIcon[states[i]!]" :class="['size-3.5', states[i] === 'pending' && 'animate-spin']" />{{ stateText[states[i]!] }}
                   </span>
-                  <a v-if="hashes[i]" :href="EXPLORER + hashes[i]" target="_blank" rel="noopener" class="font-mono text-violet-300 hover:text-cyan-300">{{ hashes[i]!.slice(0, 10) }}… ↗</a>
+                  <a v-if="hashes[i]" :href="EXPLORER + hashes[i]" target="_blank" rel="noopener" class="font-mono text-teal-200 hover:text-teal-300">{{ hashes[i]!.slice(0, 10) }}… ↗</a>
                 </div>
               </div>
             </li>
@@ -192,7 +192,7 @@ const stateText: Record<StepState, string> = { idle: '', wallet: 'Confirm in you
         </div>
         <div v-if="account && !chainOk" class="flex items-center gap-3 rounded-2xl border border-amber-400/30 bg-amber-400/10 p-4 text-sm text-amber-200">
           <UIcon name="i-lucide-network" class="size-4 shrink-0" />Your wallet is on another network.
-          <UButton label="Switch to Robinhood Chain" size="xs" class="ml-auto bg-brand-gradient text-white" @click="addNetwork" />
+          <UButton label="Switch to Robinhood Chain" size="xs" class="ml-auto bg-brand-gradient text-[#04201C]" @click="addNetwork" />
         </div>
 
         <label v-if="info.involvesStockToken" class="glass flex cursor-pointer items-start gap-3 rounded-2xl p-4 text-sm text-toned">
@@ -203,12 +203,12 @@ const stateText: Record<StepState, string> = { idle: '', wallet: 'Confirm in you
         <div class="flex flex-col gap-3 sm:flex-row sm:items-center">
           <UButton
             v-if="!account" label="Connect wallet to sign" icon="i-lucide-wallet" size="xl" block
-            class="bg-brand-gradient text-white sm:w-auto" @click="connect"
+            class="bg-brand-gradient text-[#04201C] sm:w-auto" @click="connect"
           />
           <UButton
             v-else :label="finished ? 'Done' : running ? 'Signing…' : `Sign ${info.transactions?.length ?? 0} transaction${(info.transactions?.length ?? 0) > 1 ? 's' : ''}`"
             :icon="finished ? 'i-lucide-circle-check' : 'i-lucide-pen-line'" size="xl" block :loading="running" :disabled="!canSign"
-            class="bg-brand-gradient text-white sm:w-auto" @click="signAll"
+            class="bg-brand-gradient text-[#04201C] sm:w-auto" @click="signAll"
           />
           <span class="text-xs text-dimmed">Your wallet will show each transaction again before it is sent.</span>
         </div>

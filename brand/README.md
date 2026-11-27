@@ -10,7 +10,7 @@
 | `routiq-banner-1500x500.png` | Static banner fallback — 3:1 | 1500×500 |
 
 Logo: HYPE mint `#97FCE4` on deep teal (`#0E2E28` → `#041210`) with an orbit halo for the Elysium launch (`?theme=dark`, default). `?theme=hype` renders the light-mint alternative, `?theme=classic` the original violet one.
-Site colours: violet `#7C5CFF` → blue `#5E8BFF` → cyan `#38D9F5`, background `#06060B`.
+Site + banner colours: HYPE mint `#97FCE4`, teal `#50D2C1`, deep teal `#2FB3A3`, background `#050B0A`.
 Fonts: Space Grotesk (wordmark, headings), JetBrains Mono (labels).
 
 ## Rebuild

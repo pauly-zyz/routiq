@@ -50,7 +50,7 @@ onMounted(() => {
         const a = nodes[i]!, b = nodes[j]!
         const d = Math.hypot(a.x - b.x, a.y - b.y)
         if (d < LINK) {
-          ctx.strokeStyle = `rgba(124,92,255,${(1 - d / LINK) * 0.2})`
+          ctx.strokeStyle = `rgba(80,210,193,${(1 - d / LINK) * 0.2})`
           ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke()
         }
       }
@@ -63,7 +63,7 @@ onMounted(() => {
       p.t += p.sp
       const x = p.a.x + (p.b.x - p.a.x) * p.t, y = p.a.y + (p.b.y - p.a.y) * p.t
       const g = ctx.createRadialGradient(x, y, 0, x, y, 8)
-      g.addColorStop(0, 'rgba(56,217,245,.95)'); g.addColorStop(1, 'rgba(56,217,245,0)')
+      g.addColorStop(0, 'rgba(151,252,228,.95)'); g.addColorStop(1, 'rgba(151,252,228,0)')
       ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y, 8, 0, Math.PI * 2); ctx.fill()
     }
     if (!reduce && visible && !document.hidden) raf = requestAnimationFrame(frame)

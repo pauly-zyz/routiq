@@ -30,7 +30,7 @@ const statusColor = { live: 'success', beta: 'info', planned: 'neutral' } as con
         <div class="no-scrollbar -mx-4 flex gap-1.5 overflow-x-auto px-4 lg:mx-0 lg:px-0">
           <button
             v-for="c in [{ label: 'All', icon: 'i-lucide-layout-grid' }, ...TOOL_CATEGORIES]" :key="c.label" type="button"
-            :class="['inline-flex shrink-0 cursor-pointer items-center gap-1.5 rounded-full border px-3.5 py-2 text-sm transition', cat === c.label ? 'border-violet-400/50 bg-violet-500/15 text-highlighted' : 'border-default text-muted hover:text-highlighted']"
+            :class="['inline-flex shrink-0 cursor-pointer items-center gap-1.5 rounded-full border px-3.5 py-2 text-sm transition', cat === c.label ? 'border-teal-300/50 bg-teal-400/15 text-highlighted' : 'border-default text-muted hover:text-highlighted']"
             @click="cat = c.label as ToolCategory | 'All'"
           >
             <UIcon :name="c.icon" class="size-4" />{{ c.label }}
@@ -47,7 +47,7 @@ const statusColor = { live: 'success', beta: 'info', planned: 'neutral' } as con
       >
         <article v-for="t in shown" :key="t.id" v-spotlight class="glass group flex flex-col rounded-2xl p-5 transition hover:-translate-y-0.5 hover:border-accented">
           <div class="flex items-start gap-3.5">
-            <span class="grid size-11 shrink-0 place-items-center rounded-xl border border-violet-400/25 bg-gradient-to-br from-violet-500/25 to-cyan-400/10">
+            <span class="grid size-11 shrink-0 place-items-center rounded-xl border border-teal-300/25 bg-gradient-to-br from-teal-400/25 to-emerald-300/10">
               <UIcon :name="t.icon" class="size-5 text-highlighted" />
             </span>
             <div class="min-w-0 flex-1">

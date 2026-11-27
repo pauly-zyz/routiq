@@ -159,7 +159,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="border-beam relative rounded-[28px] bg-[#0A0A12]/90 shadow-[0_40px_120px_-40px_rgba(124,92,255,.55)] backdrop-blur-xl">
+  <div class="border-beam relative rounded-[28px] bg-[#060E0C]/90 shadow-[0_40px_120px_-40px_rgba(80,210,193,.55)] backdrop-blur-xl">
     <!-- window bar -->
     <div class="flex items-center gap-2 border-b border-default px-4 py-3">
       <span class="size-2.5 rounded-full bg-white/15" /><span class="size-2.5 rounded-full bg-white/15" /><span class="size-2.5 rounded-full bg-white/15" />
@@ -167,7 +167,7 @@ onMounted(() => {
       <span class="ml-auto inline-flex items-center gap-1.5 rounded-full border border-emerald-400/30 bg-emerald-400/10 px-2.5 py-0.5 font-mono text-[11px] text-emerald-300">
         <span class="pulse-dot size-1.5 rounded-full bg-emerald-400" />live
       </span>
-      <span class="hidden whitespace-nowrap rounded-full bg-brand-gradient px-3 py-1 font-mono text-[11px] text-white sm:inline">free beta</span>
+      <span class="hidden whitespace-nowrap rounded-full bg-brand-gradient px-3 py-1 font-mono text-[11px] text-[#04201C] sm:inline">free beta</span>
     </div>
 
     <!-- transcript -->
@@ -175,13 +175,13 @@ onMounted(() => {
       <div v-for="l in lines" :key="l.key" class="line-in">
         <div v-if="l.kind === 'prompt'" class="mb-3 flex items-start gap-2.5 rounded-2xl bg-white/[.04] p-3 font-sans text-sm text-highlighted">
           <span class="grid size-6 shrink-0 place-items-center rounded-full bg-white/10 text-[11px] text-toned">you</span>
-          <span class="min-w-0 break-words">{{ l.typed }}<span v-if="l.typed !== l.text" class="caret text-cyan-300" /></span>
+          <span class="min-w-0 break-words">{{ l.typed }}<span v-if="l.typed !== l.text" class="caret text-teal-300" /></span>
         </div>
         <div v-else class="flex items-baseline gap-2.5" :class="l.kind === 'note' ? 'pl-6 text-muted' : ''">
           <UIcon
             v-if="l.kind !== 'note'"
             :name="{ discover: 'i-lucide-search', run: 'i-lucide-play', result: 'i-lucide-check', warn: 'i-lucide-triangle-alert', error: 'i-lucide-circle-x', prompt: '', note: '' }[l.kind]"
-            :class="['size-3.5 shrink-0 translate-y-0.5', { discover: 'text-cyan-300', run: 'text-violet-300', result: 'text-emerald-400', warn: 'text-amber-300', error: 'text-red-400', prompt: '', note: '' }[l.kind]]"
+            :class="['size-3.5 shrink-0 translate-y-0.5', { discover: 'text-teal-300', run: 'text-teal-200', result: 'text-emerald-400', warn: 'text-amber-300', error: 'text-red-400', prompt: '', note: '' }[l.kind]]"
           />
           <span v-else class="text-dimmed">↳</span>
           <span :class="['min-w-0 break-all', { result: 'text-emerald-300', warn: 'text-amber-200', error: 'text-red-300', run: 'text-highlighted', discover: 'text-highlighted', note: '', prompt: '' }[l.kind]]">
@@ -196,8 +196,8 @@ onMounted(() => {
 
     <!-- input + presets -->
     <div class="border-t border-default p-3">
-      <form class="mb-2.5 flex items-center gap-2 rounded-full border border-default bg-white/[.03] py-1 pl-4 pr-1 focus-within:border-violet-400/50" @submit.prevent="submit">
-        <UIcon name="i-lucide-sparkles" class="size-4 shrink-0 text-violet-300" />
+      <form class="mb-2.5 flex items-center gap-2 rounded-full border border-default bg-white/[.03] py-1 pl-4 pr-1 focus-within:border-teal-300/50" @submit.prevent="submit">
+        <UIcon name="i-lucide-sparkles" class="size-4 shrink-0 text-teal-200" />
         <input
           v-model="query"
           class="min-w-0 flex-1 bg-transparent py-1.5 text-sm text-highlighted outline-none placeholder:text-dimmed"
@@ -205,7 +205,7 @@ onMounted(() => {
           aria-label="Ask ROUTIQ"
           maxlength="80"
         >
-        <UButton type="submit" icon="i-lucide-arrow-up" size="sm" class="bg-brand-gradient text-white" :loading="busy" :disabled="!query.trim()" aria-label="Run" />
+        <UButton type="submit" icon="i-lucide-arrow-up" size="sm" class="bg-brand-gradient text-[#04201C]" :loading="busy" :disabled="!query.trim()" aria-label="Run" />
       </form>
       <div class="flex flex-wrap gap-1.5">
         <button

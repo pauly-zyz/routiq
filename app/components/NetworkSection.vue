@@ -34,14 +34,14 @@ const blockText = computed(() => state.value.block ? state.value.block.toLocaleS
     <UContainer>
       <SectionHeading eyebrow="Network">
         Launching on Elysium. <span class="text-gradient">Live on Robinhood Chain today.</span>
-        <template #sub>ROUTIQ launches on Elysium, Hyperliquid’s Layer 2. Our first tools already run on Robinhood Chain — the live numbers below are the same data the <code class="font-mono text-violet-300">chain_status</code> tool returns.</template>
+        <template #sub>ROUTIQ launches on Elysium, Hyperliquid’s Layer 2. Our first tools already run on Robinhood Chain — the live numbers below are the same data the <code class="font-mono text-teal-200">chain_status</code> tool returns.</template>
       </SectionHeading>
 
       <div class="grid grid-cols-1 gap-4 md:grid-cols-4 md:grid-rows-[auto_auto_auto]">
         <article v-reveal v-spotlight class="border-beam glass relative flex flex-col gap-6 overflow-hidden rounded-3xl p-7 md:col-span-4 lg:flex-row lg:items-center lg:justify-between">
-          <div class="absolute -right-24 -top-24 -z-10 size-72 rounded-full bg-violet-600/20 blur-3xl" />
+          <div class="absolute -right-24 -top-24 -z-10 size-72 rounded-full bg-teal-500/20 blur-3xl" />
           <div class="max-w-2xl">
-            <div class="flex items-center gap-2 font-mono text-xs uppercase tracking-[.16em] text-cyan-300"><span class="pulse-dot size-2 rounded-full bg-emerald-400" />Launch chain</div>
+            <div class="flex items-center gap-2 font-mono text-xs uppercase tracking-[.16em] text-teal-300"><span class="pulse-dot size-2 rounded-full bg-emerald-400" />Launch chain</div>
             <h3 class="mt-3 font-display text-3xl font-semibold tracking-tight text-highlighted sm:text-4xl">Elysium</h3>
             <p class="mt-2 text-toned">Hyperliquid’s Layer 2 by Kinetiq — an Arbitrum Orbit chain with fast blocks, settling to HyperEVM. ROUTIQ and the $ROUTIQ token launch here.</p>
           </div>
@@ -58,8 +58,8 @@ const blockText = computed(() => state.value.block ? state.value.block.toLocaleS
           </div>
           <div class="mt-4 font-display text-5xl font-semibold tracking-tight text-gradient tabular-nums sm:text-7xl">{{ blockText }}</div>
           <svg class="mb-4 mt-auto h-24 w-full pt-6" viewBox="0 0 300 70" preserveAspectRatio="none" aria-hidden="true">
-            <defs><linearGradient id="spark-g" gradientUnits="userSpaceOnUse" x1="0" x2="300" y1="0" y2="0"><stop offset="0" stop-color="#7C5CFF" /><stop offset="1" stop-color="#38D9F5" /></linearGradient></defs>
-            <path :d="spark.fill" fill="rgb(124 92 255 / .12)" />
+            <defs><linearGradient id="spark-g" gradientUnits="userSpaceOnUse" x1="0" x2="300" y1="0" y2="0"><stop offset="0" stop-color="#50D2C1" /><stop offset="1" stop-color="#97FCE4" /></linearGradient></defs>
+            <path :d="spark.fill" fill="rgb(80 210 193 / .12)" />
             <path :d="spark.line" fill="none" stroke="url(#spark-g)" stroke-width="2" vector-effect="non-scaling-stroke" />
             <line v-if="!spark.line" x1="0" x2="300" y1="60" y2="60" stroke="rgb(255 255 255 / .08)" stroke-dasharray="4 6" vector-effect="non-scaling-stroke" />
           </svg>
@@ -81,7 +81,7 @@ const blockText = computed(() => state.value.block ? state.value.block.toLocaleS
 
         <article v-reveal="200" v-spotlight class="glass flex items-center gap-6 rounded-3xl p-7 md:col-span-2">
           <svg viewBox="0 0 120 120" class="size-24 shrink-0 -rotate-90" aria-hidden="true">
-            <defs><linearGradient id="ring-g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7C5CFF" /><stop offset="1" stop-color="#38D9F5" /></linearGradient></defs>
+            <defs><linearGradient id="ring-g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#50D2C1" /><stop offset="1" stop-color="#97FCE4" /></linearGradient></defs>
             <circle cx="60" cy="60" r="50" fill="none" stroke="rgb(255 255 255 / .07)" stroke-width="10" />
             <circle cx="60" cy="60" r="50" fill="none" stroke="url(#ring-g)" stroke-width="10" stroke-linecap="round" :stroke-dasharray="`${C * 6.5 / 24} ${C}`" :stroke-dashoffset="-C * 9.5 / 24" />
             <line v-if="market" x1="60" y1="60" x2="100" y2="60" stroke="#fff" stroke-width="2.5" stroke-linecap="round" :style="{ transformOrigin: '60px 60px', transform: `rotate(${market.angle}deg)` }" />

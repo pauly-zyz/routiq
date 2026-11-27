@@ -24,7 +24,7 @@ h, w, _ = frames[0].shape
 sample = np.concatenate([f[::2, ::2] for f in frames[:: max(1, len(frames) // 8)]], axis=0)
 # Small accents (status green, brand violet/cyan, white) cover few pixels, so give them weight in the palette:
 # blend each with the dark background at several strengths and add those swatches to the sample.
-BG = np.array([6, 6, 11], dtype=np.float32)
+BG = np.array([5, 11, 10], dtype=np.float32)
 accents = [(52, 211, 153), (124, 92, 255), (94, 139, 255), (56, 217, 245), (255, 255, 255), (155, 133, 255), (151, 252, 228), (14, 46, 40)]
 swatches = []
 for c in accents:

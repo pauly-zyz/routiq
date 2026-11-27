@@ -20,7 +20,7 @@ onBeforeUnmount(() => window.removeEventListener('scroll', onScroll))
     <div
       :class="[
         'mx-auto flex h-16 max-w-6xl items-center justify-between gap-3 rounded-full border pl-5 pr-2 transition-all duration-300',
-        scrolled || open ? 'border-default bg-[#0B0B13]/75 shadow-2xl shadow-black/40 backdrop-blur-xl' : 'border-transparent'
+        scrolled || open ? 'border-default bg-[#08110F]/75 shadow-2xl shadow-black/40 backdrop-blur-xl' : 'border-transparent'
       ]"
     >
       <a href="#top" class="flex items-center gap-2.5 font-display text-lg font-bold tracking-wide text-highlighted" aria-label="ROUTIQ home">
@@ -36,7 +36,7 @@ onBeforeUnmount(() => window.removeEventListener('scroll', onScroll))
         <UButton
           :label="label"
           :loading="busy"
-          :class="[account ? 'font-mono' : 'bg-brand-gradient text-white shadow-lg shadow-violet-600/30 hover:opacity-90']"
+          :class="[account ? 'font-mono' : 'bg-brand-gradient text-[#04201C] shadow-lg shadow-teal-500/30 hover:opacity-90']"
           :color="account ? 'neutral' : 'primary'"
           :variant="account ? 'subtle' : 'solid'"
           :leading-icon="account ? (chainOk ? 'i-lucide-circle-check' : 'i-lucide-triangle-alert') : 'i-lucide-wallet'"
@@ -58,7 +58,7 @@ onBeforeUnmount(() => window.removeEventListener('scroll', onScroll))
       enter-active-class="transition duration-200 ease-out" enter-from-class="opacity-0 -translate-y-2"
       leave-active-class="transition duration-150 ease-in" leave-to-class="opacity-0 -translate-y-2"
     >
-      <nav v-if="open" class="mx-auto mt-2 flex max-w-6xl flex-col rounded-3xl border border-default bg-[#0B0B13]/95 p-2 backdrop-blur-xl lg:hidden">
+      <nav v-if="open" class="mx-auto mt-2 flex max-w-6xl flex-col rounded-3xl border border-default bg-[#08110F]/95 p-2 backdrop-blur-xl lg:hidden">
         <a v-for="l in links" :key="l.to" :href="l.to" class="rounded-2xl px-4 py-3 font-medium text-highlighted hover:bg-white/5" @click="open = false">{{ l.label }}</a>
       </nav>
     </Transition>

@@ -15,10 +15,10 @@ const phases = [
         <div class="absolute inset-x-0 top-[11px] hidden h-0.5 overflow-hidden rounded bg-white/[.07] lg:block"><div class="h-full w-[16%] bg-brand-gradient" /></div>
         <article
           v-for="p in phases" :key="p.when"
-          :class="['glass relative rounded-3xl p-6', p.now && 'border-violet-400/40 shadow-[0_0_60px_-24px_rgba(124,92,255,.9)]']"
+          :class="['glass relative rounded-3xl p-6', p.now && 'border-teal-300/40 shadow-[0_0_60px_-24px_rgba(80,210,193,.9)]']"
         >
-          <span :class="['absolute -top-[39px] left-6 hidden size-4 rounded-full border-2 lg:block', p.now ? 'border-violet-400 bg-violet-500 shadow-[0_0_0_6px_rgba(124,92,255,.2)]' : 'border-white/20 bg-[var(--ui-bg-muted)]']" />
-          <span :class="['font-mono text-xs uppercase tracking-widest', p.now ? 'text-cyan-300' : 'text-dimmed']">{{ p.when }}</span>
+          <span :class="['absolute -top-[39px] left-6 hidden size-4 rounded-full border-2 lg:block', p.now ? 'border-teal-300 bg-teal-400 shadow-[0_0_0_6px_rgba(80,210,193,.2)]' : 'border-white/20 bg-[var(--ui-bg-muted)]']" />
+          <span :class="['font-mono text-xs uppercase tracking-widest', p.now ? 'text-teal-300' : 'text-dimmed']">{{ p.when }}</span>
           <h3 class="mt-2 font-display text-xl font-semibold text-highlighted">{{ p.title }}</h3>
           <ul class="mt-4 space-y-2 text-sm text-toned">
             <li v-for="it in p.items" :key="it" class="flex gap-2"><UIcon :name="p.now ? 'i-lucide-circle-check' : 'i-lucide-circle-dashed'" :class="['mt-0.5 size-4 shrink-0', p.now ? 'text-emerald-400' : 'text-dimmed']" />{{ it }}</li>

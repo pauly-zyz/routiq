@@ -26,7 +26,7 @@ const items = [
           :default-value="'0'"
           :ui="{
             item: 'border-b border-default',
-            trigger: 'py-6 font-display text-lg font-medium text-highlighted hover:text-violet-300 transition-colors',
+            trigger: 'py-6 font-display text-lg font-medium text-highlighted hover:text-teal-200 transition-colors',
             body: 'pb-6 text-base leading-relaxed text-muted',
             trailingIcon: 'size-5 text-dimmed'
           }"

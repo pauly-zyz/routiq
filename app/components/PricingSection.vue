@@ -23,7 +23,7 @@ const stats = [
 
 <template>
   <section id="pricing" class="relative overflow-hidden py-24 sm:py-32">
-    <div class="aurora -right-40 top-20 h-[420px] w-[420px] bg-violet-700/25" />
+    <div class="aurora -right-40 top-20 h-[420px] w-[420px] bg-teal-600/25" />
     <UContainer class="relative">
       <div class="grid grid-cols-1 items-center gap-14 lg:grid-cols-2">
         <div>
@@ -32,7 +32,7 @@ const stats = [
           </SectionHeading>
           <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div v-for="(p, i) in points" :key="p.title" v-reveal="i * 80" class="flex gap-3.5">
-              <span class="grid size-10 shrink-0 place-items-center rounded-xl border border-default bg-white/[.03]"><UIcon :name="p.icon" class="size-5 text-violet-300" /></span>
+              <span class="grid size-10 shrink-0 place-items-center rounded-xl border border-default bg-white/[.03]"><UIcon :name="p.icon" class="size-5 text-teal-200" /></span>
               <div><h3 class="font-medium text-highlighted">{{ p.title }}</h3><p class="mt-1 text-sm text-muted">{{ p.text }}</p></div>
             </div>
           </div>
@@ -54,7 +54,7 @@ const stats = [
           </div>
           <ul class="mt-6 divide-y divide-[var(--ui-border)] rounded-2xl border border-default bg-black/20">
             <li v-for="c in calls" :key="c.tool + c.when" class="flex items-center gap-3 px-4 py-3 text-sm">
-              <UIcon name="i-lucide-zap" class="size-4 text-cyan-300" />
+              <UIcon name="i-lucide-zap" class="size-4 text-teal-300" />
               <span class="font-mono text-toned">{{ c.tool }}</span>
               <span class="ml-auto text-xs text-dimmed">{{ c.when }}</span>
               <span class="w-16 text-right font-mono text-xs text-highlighted">{{ c.cost ? `−$${c.cost.toFixed(3)}` : 'free' }}</span>

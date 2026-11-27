@@ -6,8 +6,8 @@
     <!-- background layers -->
     <div class="absolute inset-0 -z-10">
       <div class="bg-grid absolute inset-0" />
-      <div class="aurora left-[-10%] top-[-10%] h-[520px] w-[520px] bg-violet-600/40" />
-      <div class="aurora right-[-8%] top-[10%] h-[460px] w-[460px] bg-cyan-500/25 [animation-delay:-8s]" />
+      <div class="aurora left-[-10%] top-[-10%] h-[520px] w-[520px] bg-teal-500/40" />
+      <div class="aurora right-[-8%] top-[10%] h-[460px] w-[460px] bg-emerald-400/25 [animation-delay:-8s]" />
       <NetCanvas class="opacity-70" />
       <div class="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-b from-transparent to-[var(--ui-bg)]" />
     </div>
@@ -30,9 +30,9 @@
         <div class="mt-9"><InstallBox /></div>
 
         <div class="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3 text-sm text-muted">
-          <span class="inline-flex items-center gap-2"><UIcon name="i-lucide-key-round" class="size-4 text-violet-300" />No API keys</span>
-          <span class="inline-flex items-center gap-2"><UIcon name="i-lucide-gift" class="size-4 text-violet-300" />Free during beta</span>
-          <span class="inline-flex items-center gap-2"><UIcon name="i-lucide-pen-line" class="size-4 text-violet-300" />You sign every action</span>
+          <span class="inline-flex items-center gap-2"><UIcon name="i-lucide-key-round" class="size-4 text-teal-200" />No API keys</span>
+          <span class="inline-flex items-center gap-2"><UIcon name="i-lucide-gift" class="size-4 text-teal-200" />Free during beta</span>
+          <span class="inline-flex items-center gap-2"><UIcon name="i-lucide-pen-line" class="size-4 text-teal-200" />You sign every action</span>
         </div>
 
       </div>

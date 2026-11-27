@@ -26,14 +26,14 @@ const command = computed(() => `set up ${skillUrl.value}`)
 
     <div class="glass flex min-h-14 items-center gap-3 rounded-2xl py-2 pl-4 pr-2 font-mono text-[13px]">
       <template v-if="tab === 'skill'">
-        <span class="text-violet-300">$</span>
+        <span class="text-teal-200">$</span>
         <span class="min-w-0 flex-1 truncate text-highlighted">{{ command }}</span>
-        <UButton label="Copy" icon="i-lucide-copy" size="sm" class="bg-brand-gradient text-white" @click="copy(command, 'Install command copied')" />
+        <UButton label="Copy" icon="i-lucide-copy" size="sm" class="bg-brand-gradient text-[#04201C]" @click="copy(command, 'Install command copied')" />
       </template>
       <template v-else-if="tab === 'mcp'">
-        <span class="text-cyan-300">MCP</span>
+        <span class="text-teal-300">MCP</span>
         <span class="min-w-0 flex-1 truncate text-highlighted">{{ mcpUrl }}</span>
-        <UButton label="Copy" icon="i-lucide-copy" size="sm" class="bg-brand-gradient text-white" @click="copy(mcpUrl, 'MCP server URL copied')" />
+        <UButton label="Copy" icon="i-lucide-copy" size="sm" class="bg-brand-gradient text-[#04201C]" @click="copy(mcpUrl, 'MCP server URL copied')" />
       </template>
       <template v-else>
         <UIcon name="i-lucide-clock" class="size-4 text-dimmed" />
