@@ -1,6 +1,7 @@
 # ROUTIQ
 
-ROUTIQ is a tool router for AI agents on **Robinhood Chain** (Ethereum L2 on Arbitrum Orbit, chain ID 4663).
+ROUTIQ is a tool router for AI agents, **launching on Elysium** (Kinetiq's Hyperliquid L2, chain ID 99901, gas in HYPE).
+The live MCP tools run on **Robinhood Chain** today (Ethereum L2 on Arbitrum Orbit, chain ID 4663); Elysium tools come with the launch.
 An agent connects once, then discovers and calls on-chain tools — stock-token registry and verification,
 wallets, transactions, market hours — through one MCP server.
 
@@ -78,7 +79,7 @@ curl -s localhost:3000/mcp -X POST -H 'content-type: application/json' -H 'accep
 | `app/data/tools.ts` | Tool catalog shown on the site (live + planned) |
 | `app/components/AgentConsole.vue` | Hero console: real tool calls to `/mcp` (presets + free-text input) |
 | `app/composables/useRoutiqMcp.ts` | Browser helper that calls `/mcp` |
-| `app/composables/useSite.ts` | **Edit before launch:** token address, social links, chain details |
+| `app/composables/useSite.ts` | **Edit before launch:** $ROUTIQ address on Elysium (empty until launch), social links, chain details |
 | `server/routes/mcp.ts` | MCP HTTP endpoint (CORS, browser info page) |
 | `server/api/chain.get.ts` | Block + gas for the site's live widgets (CDN-cached for 2 s) |
 | `server/utils/mcpServer.ts` | Tool definitions |

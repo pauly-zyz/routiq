@@ -3,7 +3,7 @@ const openLink = useExternalLink()
 const steps = [
   { icon: 'i-lucide-upload', title: 'List your tool', text: 'Describe your endpoint or contract and what it returns.' },
   { icon: 'i-lucide-tag', title: 'Set a price', text: 'Choose a per-call price in USDG. Agents see it before they call.' },
-  { icon: 'i-lucide-coins', title: 'Get paid per call', text: 'Earnings settle on Robinhood Chain as agents use your tool.' }
+  { icon: 'i-lucide-coins', title: 'Get paid per call', text: 'Earnings settle on-chain as agents use your tool.' }
 ]
 </script>
 

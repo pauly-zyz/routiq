@@ -8,7 +8,7 @@ const openLink = useExternalLink()
     <UContainer class="flex flex-col justify-between gap-12 md:flex-row">
       <div class="max-w-xs">
         <a href="#top" class="flex items-center gap-2.5 font-display text-lg font-bold text-highlighted"><BrandMark :size="28" />ROUTIQ</a>
-        <p class="mt-4 text-sm text-muted">The tool router for AI agents on Robinhood Chain. One skill, every on-chain tool, pay per call.</p>
+        <p class="mt-4 text-sm text-muted">The tool router for AI agents. Launching on Elysium — live on Robinhood Chain today.</p>
       </div>
       <div class="grid grid-cols-2 gap-10 sm:grid-cols-3 sm:gap-20">
         <div>
@@ -17,7 +17,7 @@ const openLink = useExternalLink()
         </div>
         <div>
           <h4 class="mb-4 font-mono text-xs uppercase tracking-widest text-dimmed">Network</h4>
-          <ul class="space-y-2.5 text-sm text-toned"><li><a class="hover:text-highlighted" href="https://robinhoodchain.blockscout.com" target="_blank" rel="noopener">Explorer</a></li><li><button type="button" class="cursor-pointer hover:text-highlighted" @click="addNetwork">Add network</button></li><li><a class="hover:text-highlighted" href="#network">Live stats</a></li></ul>
+          <ul class="space-y-2.5 text-sm text-toned"><li><a class="hover:text-highlighted" href="https://robinhoodchain.blockscout.com" target="_blank" rel="noopener">Robinhood Chain explorer</a></li><li><button type="button" class="cursor-pointer hover:text-highlighted" @click="addNetwork">Add network</button></li><li><a class="hover:text-highlighted" href="#network">Live stats</a></li></ul>
         </div>
         <div>
           <h4 class="mb-4 font-mono text-xs uppercase tracking-widest text-dimmed">Community</h4>
@@ -29,7 +29,7 @@ const openLink = useExternalLink()
       <span class="bg-brand-gradient bg-clip-text bg-no-repeat [background-size:0%_100%] transition-[background-size] duration-[1200ms] ease-out group-hover:[background-size:100%_100%]">ROUTIQ</span>
     </div>
     <UContainer class="mt-10 flex flex-wrap justify-between gap-4 border-t border-default py-6 text-xs text-dimmed">
-      <span>© 2026 ROUTIQ · $ROUTIQ CA <span class="font-mono text-toned">0x3d58fdb1665cd386b5c96efb48a466022d8121e6</span></span>
+      <span>© 2026 ROUTIQ</span>
       <span>Independent project, not affiliated with Robinhood Markets, Inc. Nothing here is financial advice.</span>
     </UContainer>
   </footer>

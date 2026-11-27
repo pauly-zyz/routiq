@@ -4,7 +4,7 @@ import {
   concatHex, decodeAbiParameters, decodeFunctionData, encodeAbiParameters, encodeFunctionData, encodePacked, formatUnits,
   getAddress, isAddress, maxUint256, parseUnits, type Address, type Hex
 } from 'viem'
-import { ROUTIQ_TOKEN, USDG, chainClient, erc20Abi, stockTokens } from './chain'
+import { USDG, chainClient, erc20Abi, stockTokens } from './chain'
 import v4Snapshot from '../data/v4-pools.json'
 
 // ---------- Contracts (Uniswap's official Robinhood Chain deployments, checked on-chain) ----------
@@ -80,7 +80,6 @@ export async function knownAssets(): Promise<Asset[]> {
   return [
     { ...USDG, kind: 'stablecoin' },
     { ...WETH, kind: 'wrapped' },
-    { ...ROUTIQ_TOKEN, kind: 'project' },
     ...reg.tokens.map(t => ({ ...t, decimals: 18, kind: 'stock_token' as const }))
   ]
 }
@@ -92,7 +91,7 @@ export async function resolveAsset(input: string): Promise<Asset> {
   const hit = isAddress(q)
     ? assets.find(a => a.address === getAddress(q))
     : assets.find(a => a.symbol.toUpperCase() === q.toUpperCase())
-  if (!hit) throw new UserError(`"${input}" is not supported. Use ETH, WETH, USDG, ROUTIQ or an official Robinhood stock token (see stock_tokens).`)
+  if (!hit) throw new UserError(`"${input}" is not supported. Use ETH, WETH, USDG or an official Robinhood stock token (see stock_tokens).`)
   return hit
 }
 

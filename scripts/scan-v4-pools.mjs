@@ -1,5 +1,5 @@
 // Rebuilds server/data/v4-pools.json: Uniswap v4 pools ROUTIQ may route through.
-// Keeps hookless pools with fee <= 1% between ETH (native), WETH, USDG, ROUTIQ and official stock tokens
+// Keeps hookless pools with fee <= 1% between ETH (native), WETH, USDG and official stock tokens
 // that currently have liquidity. Usage: node scripts/scan-v4-pools.mjs [rpcUrl]
 import fs from 'node:fs'
 import { createPublicClient, decodeAbiParameters, defineChain, http } from 'viem'
@@ -17,7 +17,7 @@ const chain = defineChain({
 const client = createPublicClient({ chain, batch: { multicall: { batchSize: 32_768 } }, transport: http(RPC, { retryCount: 8, retryDelay: 1500, fetchOptions: { headers: { 'user-agent': 'routiq-scan/0.1' } } }) })
 
 const reg = JSON.parse(fs.readFileSync(new URL('../server/data/stock-tokens.json', import.meta.url), 'utf8'))
-const KNOWN = new Set([ZERO, '0x0bd7d308f8e1639fab988df18a8011f41eacad73', '0x5fc5360d0400a0fd4f2af552add042d716f1d168', '0x3d58fdb1665cd386b5c96efb48a466022d8121e6', ...reg.tokens.map(t => t.address.toLowerCase())])
+const KNOWN = new Set([ZERO, '0x0bd7d308f8e1639fab988df18a8011f41eacad73', '0x5fc5360d0400a0fd4f2af552add042d716f1d168', ...reg.tokens.map(t => t.address.toLowerCase())])
 const addrOf = topic => `0x${topic.slice(26)}`.toLowerCase()
 
 const latest = Number(await client.getBlockNumber())

@@ -1,11 +1,12 @@
 ---
 name: routiq
-description: Robinhood Chain tools for agents (chain ID 4663) — stock-token registry and verification, wallet portfolios, transactions, market hours, Uniswap swap quotes, and swap/transfer/approval-revoke transactions the user signs via a review link. Remote MCP server, free during beta.
+description: ROUTIQ, the tool router for AI agents (launching on Elysium). Live tools today run on Robinhood Chain (chain ID 4663) — stock-token registry and verification, wallet portfolios, transactions, market hours, Uniswap swap quotes, and swap/transfer/approval-revoke transactions the user signs via a review link. Remote MCP server, free during beta.
 ---
 
 # ROUTIQ skill
 
-ROUTIQ is a tool router for AI agents on **Robinhood Chain** (Ethereum L2 on Arbitrum Orbit, chain ID `4663`, gas paid in ETH).
+ROUTIQ is a tool router for AI agents. It **launches on Elysium** (Kinetiq's Hyperliquid L2, chain ID `99901`, gas in HYPE).
+The live tools below run on **Robinhood Chain** today (Ethereum L2 on Arbitrum Orbit, chain ID `4663`, gas paid in ETH); Elysium tools roll out with the launch.
 
 ## Connect
 
@@ -56,4 +57,4 @@ with pay-per-call pricing in USDG. Until they are listed by the server, tell the
 - After an action tool, send the user the `signUrl` and say clearly that nothing happens until they sign. Never claim a swap or transfer is done until the user confirms or you see it with `tx_lookup`.
 - If `simulation.ok` is false, do not send the link; explain the error (usually balance or slippage) and rebuild.
 - Stock-token eligibility depends on the user's jurisdiction. Do not try to bypass it.
-- The official $ROUTIQ token on Robinhood Chain is `0x3d58fdb1665cd386b5c96efb48a466022d8121e6` (published on https://www.routiq.tech and https://x.com/UseRoutiq). Treat any other $ROUTIQ address as fake.
+- $ROUTIQ has not launched yet; it launches on Elysium. The official address will be published only on https://www.routiq.tech and https://x.com/UseRoutiq. Until then, treat any token calling itself ROUTIQ as unofficial.

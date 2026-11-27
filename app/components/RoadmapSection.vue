@@ -1,8 +1,8 @@
 <script setup lang="ts">
 const phases = [
   { when: 'Now', title: 'Read + act', items: ['12 MCP tools live, free', 'Uniswap swaps & transfers', 'Review-and-sign links'], now: true },
-  { when: 'Phase 2', title: 'Markets & yield', items: ['stock_price & stock_premium', 'USDG lending & bridging', 'x402 pay-per-call in USDG'] },
-  { when: 'Phase 3', title: 'Open catalog', items: ['Full tool catalog', 'Provider onboarding & payouts', 'routiq CLI'] },
+  { when: 'Phase 2', title: 'Launch on Elysium', items: ['$ROUTIQ token on Elysium', 'Elysium tools: swaps, wallets, HYPE', 'x402 pay-per-call'] },
+  { when: 'Phase 3', title: 'Open catalog', items: ['Markets & yield tools', 'Provider onboarding & payouts', 'routiq CLI'] },
   { when: 'Phase 4', title: 'Agentic trading', items: ['Session keys with spend caps', 'DCA & limit orders', 'SDK for wallets & dApps'] }
 ]
 </script>

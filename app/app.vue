@@ -1,11 +1,11 @@
 <script setup lang="ts">
 const site = String(useRuntimeConfig().public.siteUrl || 'https://www.routiq.tech').replace(/\/$/, '')
-const description = 'One MCP server connects your AI agent to Robinhood Chain: official stock-token registry and verification, wallet portfolios, transactions and market hours. Free during beta.'
+const description = 'ROUTIQ is the tool router for AI agents, launching on Elysium (Hyperliquid L2). One MCP server to read the chain and prepare swaps and transfers you sign yourself — live on Robinhood Chain today. Free during beta.'
 
 useSeoMeta({
-  title: 'ROUTIQ | Every on-chain tool your agent needs, on Robinhood Chain',
+  title: 'ROUTIQ | Every on-chain tool your agent needs — launching on Elysium',
   description,
-  ogTitle: 'ROUTIQ — the tool router for agents on Robinhood Chain',
+  ogTitle: 'ROUTIQ — the tool router for AI agents, launching on Elysium',
   ogDescription: description,
   ogType: 'website',
   ogUrl: `${site}/`,

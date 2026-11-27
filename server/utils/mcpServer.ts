@@ -3,7 +3,7 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js'
 import { formatEther, formatGwei, formatUnits, getAddress, isAddress, isHash, type Address } from 'viem'
 import { z } from 'zod'
-import { ROUTIQ_TOKEN, USDG, STOCK_FACTORY, chainClient, erc20Abi, explorerAddress, explorerTx, stockTokens } from './chain'
+import { USDG, STOCK_FACTORY, chainClient, erc20Abi, explorerAddress, explorerTx, stockTokens } from './chain'
 import { marketStatus } from './marketHours'
 import { UserError, buildRevoke, buildSwap, buildTransfer, checkApprovals, simulateArbitrary, swapQuote } from './actions'
 
@@ -110,7 +110,7 @@ export function createRoutiqServer() {
     if (!address) {
       const s = symbol!.trim().toUpperCase()
       if (s === 'USDG') return json({ verdict: 'known_stablecoin', ...USDG, note: 'Address from public developer docs; name and decimals confirmed on-chain.' })
-      if (s === 'ROUTIQ') return json({ verdict: 'official_routiq_token', ...ROUTIQ_TOKEN, explorer: explorerAddress(ROUTIQ_TOKEN.address), warning: 'Any other contract using the ROUTIQ ticker is fake.' })
+      if (s === 'ROUTIQ') return json({ verdict: 'not_launched', symbol: 'ROUTIQ', note: '$ROUTIQ launches on Elysium. The official address will be published only on https://www.routiq.tech and https://x.com/UseRoutiq. Any token using this ticker before then is not official.' })
       const hits = reg.tokens.filter(t => t.symbol.toUpperCase() === s)
       return json(hits.length
         ? { verdict: 'official_stock_token', symbol: s, official: hits.map(t => ({ ...t, explorer: explorerAddress(t.address) })), warning: 'Any other contract using this ticker is NOT an official Robinhood stock token.' }
@@ -122,7 +122,6 @@ export function createRoutiqServer() {
     const official = reg.tokens.find(t => t.address === addr)
     if (official) return json({ verdict: 'official_stock_token', ...official, decimals: 18, explorer: explorerAddress(addr) })
     if (addr === USDG.address) return json({ verdict: 'known_stablecoin', ...USDG, explorer: explorerAddress(addr) })
-    if (addr === ROUTIQ_TOKEN.address) return json({ verdict: 'official_routiq_token', ...ROUTIQ_TOKEN, explorer: explorerAddress(addr) })
 
     const c = chainClient()
     const code = await c.getCode({ address: addr })
@@ -144,9 +143,9 @@ export function createRoutiqServer() {
       name: tokenName,
       symbol: tokenSymbol,
       decimals: decimals.status === 'success' ? Number(decimals.result) : null,
-      officialAddressForThisTicker: lookalike?.address ?? (tokenSymbol?.toUpperCase() === 'USDG' ? USDG.address : fakeRoutiq ? ROUTIQ_TOKEN.address : null),
+      officialAddressForThisTicker: lookalike?.address ?? (tokenSymbol?.toUpperCase() === 'USDG' ? USDG.address : null),
       note: risky
-        ? 'This contract uses an official ticker or the Robinhood name but is NOT created by the Robinhood StockFactory. Do not treat it as the real asset.'
+        ? (fakeRoutiq && !lookalike ? 'This token uses the ROUTIQ name, but $ROUTIQ has not launched yet (it launches on Elysium). It is not official.' : 'This contract uses an official ticker or the Robinhood name but is NOT created by the Robinhood StockFactory. Do not treat it as the real asset.')
         : 'Not a Robinhood stock token. ROUTIQ cannot vouch for it.',
       explorer: explorerAddress(addr)
     })

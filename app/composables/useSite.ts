@@ -1,8 +1,10 @@
 // Project settings. Edit before launch.
 export const SITE = {
   name: 'ROUTIQ',
-  // Official $ROUTIQ contract. Leave empty until deployed — the UI then shows a warning instead.
-  tokenAddress: '0x3d58fdb1665cd386b5c96efb48a466022d8121e6',
+  // Official $ROUTIQ contract on Elysium. Empty until launch — the UI then says it is announced at launch.
+  tokenAddress: '',
+  // Launch chain (Kinetiq's Hyperliquid L2). Shown on the site; tools for it roll out at launch.
+  launch: { name: 'Elysium', chainId: 99901, gas: 'HYPE', by: 'Kinetiq', mainnetSince: 'November 9, 2026' },
   // `providers`: where tool providers apply (a form or email link). Empty = "Coming soon".
   links: { x: 'https://x.com/UseRoutiq', discord: '', providers: '', docs: '' } as Record<string, string>,
   chain: {

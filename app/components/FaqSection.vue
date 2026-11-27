@@ -1,12 +1,13 @@
 <script setup lang="ts">
 const items = [
-  { label: 'What is ROUTIQ?', content: 'A tool router for AI agents on Robinhood Chain. One MCP server gives your agent tools to read the chain (stock tokens, wallets, transactions, market hours) and to prepare actions (Uniswap swaps, transfers, approval revokes) that you sign yourself.' },
+  { label: 'What is ROUTIQ?', content: 'A tool router for AI agents. One MCP server gives your agent tools to read the chain and to prepare actions (Uniswap swaps, transfers, approval revokes) that you sign yourself. ROUTIQ launches on Elysium, Hyperliquid’s Layer 2; its first tools already run on Robinhood Chain.' },
+  { label: 'Which chains does ROUTIQ support?', content: 'Elysium is our launch chain (chain ID 99901, gas in HYPE). Today the live MCP tools run on Robinhood Chain (chain ID 4663): stock tokens, wallets, transactions, market hours and Uniswap swaps. Elysium tools roll out with the launch.' },
   { label: 'Do I need API keys for each provider?', content: 'No. ROUTIQ handles access to every tool in the catalog. Your agent only needs the skill (or MCP server) and a funded balance.' },
   { label: 'How is pricing structured?', content: 'The live MCP tools are free during the beta. Paid tools will be pay per call with no subscription: each tool shows its price before the agent calls it. Prices shown for planned tools are planned prices.' },
   { label: 'Can an agent move my funds?', content: 'No. Action tools only build and simulate transactions, then return a link to routiq.tech/sign. That page decodes every call itself, refuses anything outside exact approvals, short-lived Permit2 allowances, transfers and Uniswap v3/v4 swaps of known tokens, and you sign in your own wallet. ROUTIQ never holds your keys.' },
   { label: 'A tool failed. Am I charged?', content: 'Failed calls are not charged. You pay only for calls that return a result.' },
   { label: 'Which agents are supported?', content: 'Any agent or IDE that supports remote MCP servers (Streamable HTTP) can connect to /mcp today. Agents can also read the skill file. The CLI arrives later.' },
-  { label: 'Is there a ROUTIQ token?', content: 'Yes. The official $ROUTIQ contract on Robinhood Chain is 0x3d58fdb1665cd386b5c96efb48a466022d8121e6. It is published only on this site and @UseRoutiq on X. Never trust addresses sent in DMs — check any address with the token_verify tool.' }
+  { label: 'Is there a ROUTIQ token?', content: '$ROUTIQ launches on Elysium. The official contract address will be published only on this site and on @UseRoutiq on X. Until then, any address claiming to be $ROUTIQ is not ours — never trust addresses sent in DMs.' }
 ]
 </script>
 

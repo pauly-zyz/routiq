@@ -46,7 +46,7 @@ function summarize(tool: string, r: any): { kind: Kind, text: string }[] {
         const t = r.official?.[0] ?? r
         return [{ kind: 'result', text: `official ✓ ${t.name}` }, { kind: 'note', text: `${t.symbol} · ${t.address}` }]
       }
-      if (r.verdict === 'official_routiq_token') return [{ kind: 'result', text: `official ✓ ${r.name} ($${r.symbol})` }, { kind: 'note', text: r.address }]
+      if (r.verdict === 'not_launched') return [{ kind: 'warn', text: '$ROUTIQ has not launched yet — it launches on Elysium' }, { kind: 'note', text: 'the official address will be posted on routiq.tech and @UseRoutiq' }]
       if (r.verdict === 'known_stablecoin') return [{ kind: 'result', text: `known stablecoin ✓ ${r.name} (${r.symbol}) · ${r.decimals} decimals` }]
       if (r.verdict === 'impersonation_risk') return [{ kind: 'warn', text: `look-alike ⚠ ${r.symbol ?? '?'} is NOT the official token` }, ...(r.officialAddressForThisTicker ? [{ kind: 'note' as Kind, text: `official address ${r.officialAddressForThisTicker}` }] : [])]
       if (r.verdict === 'not_listed') return [{ kind: 'warn', text: `no official Robinhood stock token uses ${r.symbol}` }]

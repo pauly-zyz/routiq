@@ -22,8 +22,8 @@ const statusColor = { live: 'success', beta: 'info', planned: 'neutral' } as con
   <section id="tools" class="relative py-24 sm:py-32">
     <UContainer>
       <SectionHeading eyebrow="Tool catalog">
-        One registry. <span class="text-gradient">Every Robinhood Chain tool.</span>
-        <template #sub>Prices, trading, wallets, DeFi and safety checks — ranked for your agent by fit and price. Live tools work today through the MCP server; the rest are on the roadmap.</template>
+        One registry. <span class="text-gradient">Every on-chain tool.</span>
+        <template #sub>Prices, trading, wallets, DeFi and safety checks — ranked for your agent by fit and price. Live tools run on Robinhood Chain today through the MCP server; Elysium tools roll out with our launch.</template>
       </SectionHeading>
 
       <div v-reveal class="mb-6 flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">

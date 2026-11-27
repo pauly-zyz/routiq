@@ -18,9 +18,9 @@ Everything is drawn in `source/render.html` (canvas, deterministic per frame, lo
 ```bash
 npm install                     # fonts come from node_modules
 cd brand/source
-PW=$(npm root -g)/playwright node capture.js banner 1500 500 60 /tmp/f-banner
-PW=$(npm root -g)/playwright node capture.js logo-anim 500 500 48 /tmp/f-logoanim
-PW=$(npm root -g)/playwright node capture.js logo 1024 1024 1 /tmp/f-logo
+PW=$(npm root -g)/playwright node capture.cjs banner 1500 500 60 /tmp/f-banner
+PW=$(npm root -g)/playwright node capture.cjs logo-anim 500 500 48 /tmp/f-logoanim
+PW=$(npm root -g)/playwright node capture.cjs logo 1024 1024 1 /tmp/f-logo
 python3 make_gif.py /tmp/f-banner ../routiq-banner-1500x500.gif 50 8
 python3 make_gif.py /tmp/f-logoanim ../routiq-logo-animated-500.gif 42 6
 ```

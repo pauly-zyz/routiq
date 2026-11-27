@@ -33,15 +33,28 @@ const blockText = computed(() => state.value.block ? state.value.block.toLocaleS
   <section id="network" class="relative border-y border-default bg-[var(--ui-bg-muted)] py-24 sm:py-32">
     <UContainer>
       <SectionHeading eyebrow="Network">
-        Built on Robinhood Chain. <span class="text-gradient">Watching it live.</span>
-        <template #sub>Read from Robinhood Chain every few seconds — the same data the <code class="font-mono text-violet-300">chain_status</code> tool returns.</template>
+        Launching on Elysium. <span class="text-gradient">Live on Robinhood Chain today.</span>
+        <template #sub>ROUTIQ launches on Elysium, Hyperliquid’s Layer 2. Our first tools already run on Robinhood Chain — the live numbers below are the same data the <code class="font-mono text-violet-300">chain_status</code> tool returns.</template>
       </SectionHeading>
 
       <div class="grid grid-cols-1 gap-4 md:grid-cols-4 md:grid-rows-[auto_auto_auto]">
+        <article v-reveal v-spotlight class="border-beam glass relative flex flex-col gap-6 overflow-hidden rounded-3xl p-7 md:col-span-4 lg:flex-row lg:items-center lg:justify-between">
+          <div class="absolute -right-24 -top-24 -z-10 size-72 rounded-full bg-violet-600/20 blur-3xl" />
+          <div class="max-w-2xl">
+            <div class="flex items-center gap-2 font-mono text-xs uppercase tracking-[.16em] text-cyan-300"><span class="pulse-dot size-2 rounded-full bg-emerald-400" />Launch chain</div>
+            <h3 class="mt-3 font-display text-3xl font-semibold tracking-tight text-highlighted sm:text-4xl">Elysium</h3>
+            <p class="mt-2 text-toned">Hyperliquid’s Layer 2 by Kinetiq — an Arbitrum Orbit chain with fast blocks, settling to HyperEVM. ROUTIQ and the $ROUTIQ token launch here.</p>
+          </div>
+          <dl class="grid shrink-0 grid-cols-3 gap-3 text-center">
+            <div class="rounded-2xl border border-default bg-black/20 px-4 py-3"><dt class="font-mono text-[11px] text-dimmed">Chain ID</dt><dd class="mt-1 font-display text-xl font-semibold text-highlighted">99901</dd></div>
+            <div class="rounded-2xl border border-default bg-black/20 px-4 py-3"><dt class="font-mono text-[11px] text-dimmed">Gas</dt><dd class="mt-1 font-display text-xl font-semibold text-highlighted">HYPE</dd></div>
+            <div class="rounded-2xl border border-default bg-black/20 px-4 py-3"><dt class="font-mono text-[11px] text-dimmed">Mainnet</dt><dd class="mt-1 font-display text-xl font-semibold text-highlighted">Nov 9</dd></div>
+          </dl>
+        </article>
         <article v-reveal v-spotlight class="glass flex flex-col rounded-3xl p-7 md:col-span-2 md:row-span-2">
           <div class="flex flex-wrap items-center gap-2 font-mono text-xs text-dimmed">
             <span :class="['size-2 rounded-full', state.status === 'live' ? 'pulse-dot bg-emerald-400' : 'bg-white/30']" />
-            Latest block · {{ state.status === 'live' ? 'live' : state.status === 'down' ? 'RPC unavailable, retrying' : 'connecting…' }}
+            Robinhood Chain · latest block · {{ state.status === 'live' ? 'live' : state.status === 'down' ? 'RPC unavailable, retrying' : 'connecting…' }}
           </div>
           <div class="mt-4 font-display text-5xl font-semibold tracking-tight text-gradient tabular-nums sm:text-7xl">{{ blockText }}</div>
           <svg class="mb-4 mt-auto h-24 w-full pt-6" viewBox="0 0 300 70" preserveAspectRatio="none" aria-hidden="true">
@@ -61,7 +74,7 @@ const blockText = computed(() => state.value.block ? state.value.block.toLocaleS
         </article>
 
         <article v-reveal="140" v-spotlight class="glass flex flex-col items-start rounded-3xl p-7">
-          <div class="font-mono text-xs text-dimmed">Chain ID</div>
+          <div class="font-mono text-xs text-dimmed">Robinhood Chain ID</div>
           <div class="mt-3 font-display text-4xl font-semibold text-highlighted">4663</div>
           <UButton label="Add to wallet" icon="i-lucide-plus" size="sm" color="primary" variant="soft" class="mt-auto pt-1.5" @click="addNetwork" />
         </article>
@@ -83,13 +96,6 @@ const blockText = computed(() => state.value.block ? state.value.block.toLocaleS
           </div>
         </article>
 
-        <article v-reveal="260" v-spotlight class="glass flex flex-wrap items-center justify-between gap-5 rounded-3xl p-7 md:col-span-4">
-          <div>
-            <div class="font-mono text-xs text-dimmed">Architecture</div>
-            <p class="mt-2 text-lg text-highlighted">Ethereum Layer 2 on <b class="text-violet-300">Arbitrum Orbit</b>. Fast blocks, low fees, settled on Ethereum.</p>
-          </div>
-          <UButton label="Open explorer" trailing-icon="i-lucide-arrow-up-right" color="neutral" variant="outline" to="https://robinhoodchain.blockscout.com" target="_blank" />
-        </article>
       </div>
     </UContainer>
   </section>
