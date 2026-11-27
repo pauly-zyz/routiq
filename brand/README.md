@@ -5,10 +5,12 @@
 | `routiq-logo-1024.png` | Token logo (DexScreener, wallets, socials) — 1:1 | 1024×1024 |
 | `routiq-logo-500.png` | Smaller logo — 1:1 | 500×500 |
 | `routiq-logo-animated-500.gif` | Animated logo (light packet travels the route) — 1:1 | 500×500 |
+| `routiq-logo-mint-1024.png` | Alternative light-mint logo — 1:1 | 1024×1024 |
 | `routiq-banner-1500x500.gif` | Animated header banner (DexScreener, X) — 3:1 | 1500×500 |
 | `routiq-banner-1500x500.png` | Static banner fallback — 3:1 | 1500×500 |
 
-Colours: violet `#7C5CFF` → blue `#5E8BFF` → cyan `#38D9F5`, background `#06060B`.
+Logo: HYPE mint `#97FCE4` on deep teal (`#0E2E28` → `#041210`) with an orbit halo for the Elysium launch (`?theme=dark`, default). `?theme=hype` renders the light-mint alternative, `?theme=classic` the original violet one.
+Site colours: violet `#7C5CFF` → blue `#5E8BFF` → cyan `#38D9F5`, background `#06060B`.
 Fonts: Space Grotesk (wordmark, headings), JetBrains Mono (labels).
 
 ## Rebuild
