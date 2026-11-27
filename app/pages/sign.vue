@@ -9,6 +9,7 @@ interface Inspect {
   from?: string
   expired?: boolean
   involvesStockToken?: boolean
+  chain?: { key: WalletChainKey, id: number, name: string, nativeSymbol: string, explorer: string | null }
   steps?: { title: string, detail: string }[]
   simulation?: { ok: boolean, steps: { ok: boolean, gasUsed: number, error?: string }[] }
   estimatedNetworkFee?: string | null
@@ -16,7 +17,7 @@ interface Inspect {
 }
 type StepState = 'idle' | 'wallet' | 'pending' | 'done' | 'failed'
 
-const { account, chainOk, connect, addNetwork, short } = useWallet()
+const { account, onChain, connect, addNetwork, short } = useWallet()
 const toast = useToast()
 const payload = ref('')
 const info = ref<Inspect | null>(null)
@@ -26,7 +27,10 @@ const running = ref(false)
 const states = ref<StepState[]>([])
 const hashes = ref<(string | null)[]>([])
 const finished = ref(false)
-const EXPLORER = 'https://robinhoodchain.blockscout.com/tx/'
+const linkChain = computed<WalletChainKey>(() => info.value?.chain?.key ?? SITE.defaultChain)
+const chainName = computed(() => info.value?.chain?.name ?? SITE.chains[linkChain.value].chainName)
+const chainOk = computed(() => onChain(linkChain.value))
+const txUrl = (h: string) => (info.value?.chain?.explorer ? `${info.value.chain.explorer}/tx/${h}` : null)
 
 async function inspect() {
   loading.value = true
@@ -88,7 +92,7 @@ async function signAll() {
       states.value[i] = 'done'
     }
     finished.value = true
-    toast.add({ title: 'All done', description: 'Every transaction is confirmed on Robinhood Chain.', icon: 'i-lucide-circle-check', color: 'success' })
+    toast.add({ title: 'All done', description: `Every transaction is confirmed on ${chainName.value}.`, icon: 'i-lucide-circle-check', color: 'success' })
   } catch (err: any) {
     const i = states.value.findIndex(s => s === 'wallet' || s === 'pending')
     if (i >= 0) states.value[i] = err?.code === 4001 ? 'idle' : 'failed'
@@ -117,7 +121,7 @@ const stateText: Record<StepState, string> = { idle: '', wallet: 'Confirm in you
         :leading-icon="account ? (chainOk ? 'i-lucide-circle-check' : 'i-lucide-triangle-alert') : 'i-lucide-wallet'"
         :color="account ? 'neutral' : 'primary'" :variant="account ? 'subtle' : 'solid'"
         :class="account ? 'font-mono' : 'bg-brand-gradient text-[#04201C]'"
-        @click="connect"
+        @click="connect(linkChain)"
       />
     </header>
 
@@ -135,7 +139,7 @@ const stateText: Record<StepState, string> = { idle: '', wallet: 'Confirm in you
 
       <!-- loading -->
       <div v-else-if="loading" class="glass mt-10 flex items-center gap-3 rounded-3xl p-8 text-muted">
-        <UIcon name="i-lucide-loader-circle" class="size-5 animate-spin text-teal-300" />Decoding and simulating on Robinhood Chain…
+        <UIcon name="i-lucide-loader-circle" class="size-5 animate-spin text-teal-300" />Decoding and simulating on-chain…
       </div>
 
       <!-- rejected link -->
@@ -167,7 +171,8 @@ const stateText: Record<StepState, string> = { idle: '', wallet: 'Confirm in you
                   <span v-if="states[i] !== 'idle'" :class="['inline-flex items-center gap-1', states[i] === 'done' ? 'text-emerald-300' : states[i] === 'failed' ? 'text-red-300' : 'text-teal-300']">
                     <UIcon :name="stateIcon[states[i]!]" :class="['size-3.5', states[i] === 'pending' && 'animate-spin']" />{{ stateText[states[i]!] }}
                   </span>
-                  <a v-if="hashes[i]" :href="EXPLORER + hashes[i]" target="_blank" rel="noopener" class="font-mono text-teal-200 hover:text-teal-300">{{ hashes[i]!.slice(0, 10) }}… ↗</a>
+                  <a v-if="hashes[i] && txUrl(hashes[i]!)" :href="txUrl(hashes[i]!)!" target="_blank" rel="noopener" class="font-mono text-teal-200 hover:text-teal-300">{{ hashes[i]!.slice(0, 10) }}… ↗</a>
+                  <span v-else-if="hashes[i]" class="font-mono text-teal-200" :title="hashes[i]!">{{ hashes[i]!.slice(0, 10) }}…</span>
                 </div>
               </div>
             </li>
@@ -191,8 +196,8 @@ const stateText: Record<StepState, string> = { idle: '', wallet: 'Confirm in you
           <UIcon name="i-lucide-user-x" class="mt-0.5 size-4 shrink-0" />Your connected wallet is {{ short }}, but this was prepared for {{ info.from }}. Switch accounts in your wallet.
         </div>
         <div v-if="account && !chainOk" class="flex items-center gap-3 rounded-2xl border border-amber-400/30 bg-amber-400/10 p-4 text-sm text-amber-200">
-          <UIcon name="i-lucide-network" class="size-4 shrink-0" />Your wallet is on another network.
-          <UButton label="Switch to Robinhood Chain" size="xs" class="ml-auto bg-brand-gradient text-[#04201C]" @click="addNetwork" />
+          <UIcon name="i-lucide-network" class="size-4 shrink-0" />Your wallet is on another network — this link is for {{ chainName }}.
+          <UButton :label="`Switch to ${chainName}`" size="xs" class="ml-auto bg-brand-gradient text-[#04201C]" @click="addNetwork(linkChain)" />
         </div>
 
         <label v-if="info.involvesStockToken" class="glass flex cursor-pointer items-start gap-3 rounded-2xl p-4 text-sm text-toned">
@@ -203,7 +208,7 @@ const stateText: Record<StepState, string> = { idle: '', wallet: 'Confirm in you
         <div class="flex flex-col gap-3 sm:flex-row sm:items-center">
           <UButton
             v-if="!account" label="Connect wallet to sign" icon="i-lucide-wallet" size="xl" block
-            class="bg-brand-gradient text-[#04201C] sm:w-auto" @click="connect"
+            class="bg-brand-gradient text-[#04201C] sm:w-auto" @click="connect(linkChain)"
           />
           <UButton
             v-else :label="finished ? 'Done' : running ? 'Signing…' : `Sign ${info.transactions?.length ?? 0} transaction${(info.transactions?.length ?? 0) > 1 ? 's' : ''}`"

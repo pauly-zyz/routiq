@@ -23,6 +23,8 @@ export default defineNuxtConfig({
   runtimeConfig: {
     // Server-only RPC for the MCP tools (set NUXT_RPC_URL to a provider endpoint in production).
     rpcUrl: '',
+    // Server-only Elysium RPC (NUXT_ELYSIUM_RPC_URL). Defaults to Kinetiq's public RPC.
+    elysiumRpcUrl: '',
     public: {
       // Public site URL: install commands, MCP URL and SEO tags. Override with NUXT_PUBLIC_SITE_URL.
       siteUrl: 'https://www.routiq.tech',

@@ -1,0 +1,83 @@
+{
+ "source": "Tokens whose 1 HYPE buy-and-sell-back round trip returned >= 90% against HYPE, WHYPE or USDC on Uniswap v3/v4 on Elysium at block 11422606. One token per symbol (the deepest); listing is not an endorsement. Rebuild: node scripts/scan-elysium.mjs",
+ "scannedToBlock": 11422606,
+ "tokens": [
+  {
+   "symbol": "KNTQ",
+   "name": "Kinetiq Governance Token",
+   "address": "0xe45a355d9e9cAd2aD85F2d03E3eE3102A036acF0",
+   "decimals": 18,
+   "depthHype": 100
+  },
+  {
+   "symbol": "wNVDAx",
+   "name": "Wrapped NVIDIA xStock",
+   "address": "0x11265018bF2d5a99fb71EFaE73aD670203C1dF44",
+   "decimals": 18,
+   "depthHype": 10
+  },
+  {
+   "symbol": "MNTR",
+   "name": "Monitor",
+   "address": "0x7e4eD7Dc6187225E9a005F029B5EfF866aB7Fba3",
+   "decimals": 18,
+   "depthHype": 10
+  },
+  {
+   "symbol": "BLOB",
+   "name": "Blob",
+   "address": "0x58E4fDC512B7E8036521324E914A88D65d1e32AD",
+   "decimals": 18,
+   "depthHype": 1
+  },
+  {
+   "symbol": "PZERO",
+   "name": "poolzero.fun",
+   "address": "0x7F10Bda46c1E99fe2d64aFFADc1793a07D5f5aeE",
+   "decimals": 18,
+   "depthHype": 1
+  },
+  {
+   "symbol": "USDP",
+   "name": "USD Pangea",
+   "address": "0xadAE7B70EdE8b76D9FCa39C2ca8901D131a07613",
+   "decimals": 6,
+   "depthHype": 1
+  },
+  {
+   "symbol": "CLU",
+   "name": "Clu",
+   "address": "0x13C83fd2DF0Ae8C7B462D344a458275D1f6B5b82",
+   "decimals": 18,
+   "depthHype": 1
+  },
+  {
+   "symbol": "ZEPHYR",
+   "name": "ZEPHYR",
+   "address": "0x3E96AADd6dDB6bC21739506C1e125CAb7d2b8BF0",
+   "decimals": 18,
+   "depthHype": 1
+  },
+  {
+   "symbol": "PERPME",
+   "name": "PerpMe",
+   "address": "0x11aeD7F6B23bB9Ccb2BbF9E39E67ddF7F4210999",
+   "decimals": 18,
+   "depthHype": 1
+  },
+  {
+   "symbol": "DIVA",
+   "name": "Diva Coin",
+   "address": "0x97065e48BbddE9e6689A4D45bFcBd3BeC04DE71c",
+   "decimals": 18,
+   "depthHype": 1
+  },
+  {
+   "symbol": "VAERU",
+   "name": "Vaeru",
+   "address": "0x8AABB9f787a9663922587f94Fef207DD6B57c858",
+   "decimals": 18,
+   "depthHype": 1
+  }
+ ]
+}

@@ -29,7 +29,7 @@ const mcpConfig = computed(() => JSON.stringify({ mcpServers: { routiq: { url: m
             <UBadge label="live · beta" color="success" variant="subtle" size="sm" />
           </div>
           <h3 class="mt-6 font-display text-2xl font-semibold text-highlighted">MCP</h3>
-          <p class="mt-2 text-muted">Add the remote MCP server to any MCP-compatible agent or IDE. Twelve tools, free during beta. Actions come back as sign links.</p>
+          <p class="mt-2 text-muted">Add the remote MCP server to any MCP-compatible agent or IDE. Thirteen tools on Elysium and Robinhood Chain, free during beta. Actions come back as sign links.</p>
           <button type="button" class="mt-6 flex w-full cursor-pointer items-start gap-2 rounded-xl border border-default bg-black/30 px-4 py-3 text-left font-mono text-xs leading-relaxed text-toned transition hover:border-accented" @click="copy(mcpConfig, 'MCP config copied')">
             <span class="min-w-0 flex-1 break-all"><span class="text-emerald-300">"routiq"</span>: { <span class="text-emerald-300">"url"</span>: <span class="text-teal-300">"{{ mcpUrl }}"</span> }</span><UIcon name="i-lucide-copy" class="mt-0.5 size-4 shrink-0 text-dimmed" />
           </button>

@@ -40,7 +40,7 @@ onBeforeUnmount(() => window.removeEventListener('scroll', onScroll))
           :color="account ? 'neutral' : 'primary'"
           :variant="account ? 'subtle' : 'solid'"
           :leading-icon="account ? (chainOk ? 'i-lucide-circle-check' : 'i-lucide-triangle-alert') : 'i-lucide-wallet'"
-          @click="connect"
+          @click="connect()"
         />
         <UButton
           class="lg:hidden"

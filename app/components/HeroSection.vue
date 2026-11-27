@@ -24,7 +24,7 @@
         </h1>
         <p class="mt-6 max-w-xl text-lg leading-relaxed text-toned">
           One MCP server lets your AI agent read the chain and act on it — best-price swaps across Uniswap v3 and v4,
-          send tokens, audit approvals. You sign every action. ROUTIQ launches on Elysium; Robinhood Chain tools are live today — try them in the console.
+          send tokens, audit approvals. You sign every action. Live on Elysium, Hyperliquid’s L2, and on Robinhood Chain — try it in the console.
         </p>
 
         <div class="mt-9"><InstallBox /></div>

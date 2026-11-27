@@ -1,4 +1,4 @@
-// Live Robinhood Chain data from the public RPC. One shared poller for the whole page.
+// Live Elysium data (the launch chain) via our cached /api/chain endpoint. One shared poller for the whole page.
 interface ChainState {
   status: 'connecting' | 'live' | 'down'
   block: number | null

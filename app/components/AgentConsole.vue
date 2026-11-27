@@ -30,13 +30,16 @@ async function push(kind: Kind, text: string, type = false) {
   }
 }
 
+type Out = { kind: Kind, text: string }[]
+const ELY = 'elysium', RH = 'robinhood'
+
 // Turn a tool's JSON into a few readable lines.
-function summarize(tool: string, r: any): { kind: Kind, text: string }[] {
+function summarize(tool: string, r: any): Out {
   switch (tool) {
     case 'chain_status':
-      return [{ kind: 'result', text: `block ${num(r.latestBlock, 0)} · gas ${r.gasPriceGwei} gwei · ~${r.avgBlockTimeMs} ms blocks` }]
+      return [{ kind: 'result', text: `${r.chain} · block ${num(r.latestBlock, 0)} · gas ${r.gasPriceGwei} gwei (${r.gasToken}) · ~${r.avgBlockTimeMs} ms blocks` }]
     case 'market_hours': {
-      const out: { kind: Kind, text: string }[] = [{ kind: 'result', text: `${r.exchange}: ${r.session}${r.regularSessionOpen ? '' : ''} · New York ${r.timeInNewYork.slice(11)} (${r.day})` }]
+      const out: Out = [{ kind: 'result', text: `${r.exchange}: ${r.session} · New York ${r.timeInNewYork.slice(11)} (${r.day})` }]
       if (r.nextRegularOpen && !r.regularSessionOpen) out.push({ kind: 'note', text: `next regular open ${new Date(r.nextRegularOpen).toUTCString().slice(0, 22)} UTC` })
       out.push({ kind: 'note', text: 'stock tokens keep trading 24/7 on Robinhood Chain' })
       return out
@@ -44,22 +47,36 @@ function summarize(tool: string, r: any): { kind: Kind, text: string }[] {
     case 'token_verify':
       if (r.verdict === 'official_stock_token') {
         const t = r.official?.[0] ?? r
-        return [{ kind: 'result', text: `official ✓ ${t.name}` }, { kind: 'note', text: `${t.symbol} · ${t.address}` }]
+        return [{ kind: 'result', text: `official ✓ ${t.name} · Robinhood Chain` }, { kind: 'note', text: `${t.symbol} · ${t.address}` }]
       }
+      if (r.verdict === 'listed') {
+        const t = r.tokens?.[0] ?? r
+        return [{ kind: 'result', text: `on ROUTIQ's Elysium list ✓ ${t.name} (${t.symbol})` }, { kind: 'note', text: `${t.address} · ${t.decimals} decimals` }]
+      }
+      if (r.verdict === 'native_coin') return [{ kind: 'result', text: 'HYPE is Elysium\'s native gas coin — no token contract to verify' }, { kind: 'note', text: 'anything else called HYPE on Elysium is a token, not the coin' }]
       if (r.verdict === 'not_launched') return [{ kind: 'warn', text: '$ROUTIQ has not launched yet — it launches on Elysium' }, { kind: 'note', text: 'the official address will be posted on routiq.tech and @UseRoutiq' }]
       if (r.verdict === 'known_stablecoin') return [{ kind: 'result', text: `known stablecoin ✓ ${r.name} (${r.symbol}) · ${r.decimals} decimals` }]
-      if (r.verdict === 'impersonation_risk') return [{ kind: 'warn', text: `look-alike ⚠ ${r.symbol ?? '?'} is NOT the official token` }, ...(r.officialAddressForThisTicker ? [{ kind: 'note' as Kind, text: `official address ${r.officialAddressForThisTicker}` }] : [])]
-      if (r.verdict === 'not_listed') return [{ kind: 'warn', text: `no official Robinhood stock token uses ${r.symbol}` }]
-      return [{ kind: 'note', text: `${r.symbol ? `${r.symbol} — ` : ''}not a Robinhood stock token` }]
+      if (r.verdict === 'impersonation_risk') {
+        const real = r.officialAddressForThisTicker ?? r.listedAddressForThisTicker
+        return [{ kind: 'warn', text: `look-alike ⚠ ${r.symbol ?? '?'} on ${r.chain} is NOT the real token` }, ...(real ? [{ kind: 'note' as Kind, text: `real address ${real}` }] : [])]
+      }
+      if (r.verdict === 'not_listed') return [{ kind: 'warn', text: `${r.symbol} is not a Robinhood stock token and not on the Elysium list` }]
+      return [{ kind: 'note', text: `${r.symbol ? `${r.symbol} — ` : ''}not on ROUTIQ's lists for ${r.chain ?? 'this chain'}` }]
     case 'stock_tokens':
       if (!r.matches) return [{ kind: 'warn', text: 'no official stock token matches that name' }]
       return [
         ...r.tokens.slice(0, 3).map((t: any) => ({ kind: 'result' as Kind, text: `${t.symbol} · ${t.name} · ${short(t.address)}` })),
-        { kind: 'note', text: `${r.matches} match${r.matches > 1 ? 'es' : ''} · ${r.totalOfficialTokens} official tokens in the registry` }
+        { kind: 'note', text: `${r.matches} match${r.matches > 1 ? 'es' : ''} · ${r.totalOfficialTokens} official tokens on Robinhood Chain` }
+      ]
+    case 'elysium_tokens':
+      if (!r.matches) return [{ kind: 'warn', text: 'no token on the Elysium list matches that' }]
+      return [
+        ...r.tokens.slice(0, 4).map((t: any) => ({ kind: 'result' as Kind, text: `${t.symbol} · ${t.name}${t.address ? ` · ${short(t.address)}` : ''}` })),
+        { kind: 'note', text: `${r.matches} of ${r.total} tokens on Elysium · listing is not an endorsement` }
       ]
     case 'wallet_portfolio': {
       const h = r.holdings as any[]
-      const out: { kind: Kind, text: string }[] = [{ kind: 'result', text: `${short(r.address)} · ${num(r.eth)} ETH · ${h.length} token${h.length === 1 ? '' : 's'}` }]
+      const out: Out = [{ kind: 'result', text: `${short(r.address)} on ${r.chain} · ${num(r.native.amount)} ${r.native.symbol} · ${h.length} token${h.length === 1 ? '' : 's'}` }]
       h.slice(0, 4).forEach(x => out.push({ kind: 'note', text: `${x.symbol} ${num(x.amount)}` }))
       if (h.length > 4) out.push({ kind: 'note', text: `+${h.length - 4} more` })
       return out
@@ -68,15 +85,27 @@ function summarize(tool: string, r: any): { kind: Kind, text: string }[] {
       return [
         { kind: 'result', text: `${r.sell} → ${r.buy}` },
         { kind: 'note', text: `${r.inversePrice} · impact ${r.priceImpactPct ?? '?'}% · ${r.route}` },
-        { kind: 'note', text: 'swap_build turns this into a sign link for your wallet' }
+        { kind: 'note', text: `${r.venue} · swap_build turns this into a sign link` }
       ]
     case 'tx_lookup':
       return [
-        { kind: r.status === 'success' ? 'result' : 'warn', text: `${r.status} · block ${num(r.block, 0)} · fee ${r.feeEth} ETH` },
+        { kind: r.status === 'success' ? 'result' : 'warn', text: `${r.status} on ${r.chain} · block ${num(r.block, 0)} · fee ${r.fee}` },
         ...r.transfers.slice(0, 3).map((t: any) => ({ kind: 'note' as Kind, text: `${num(t.amount)} ${t.symbol}  ${short(t.from)} → ${short(t.to)}` }))
       ]
   }
   return [{ kind: 'result', text: JSON.stringify(r).slice(0, 140) }]
+}
+
+const argText = (args: Record<string, unknown>) => {
+  const shown = Object.fromEntries(Object.entries(args).map(([k, v]) => [k, typeof v === 'string' && /^0x[0-9a-fA-F]{40,}$/.test(v) ? short(v) : v]))
+  return Object.keys(shown).length ? `, ${JSON.stringify(shown)}` : ''
+}
+
+async function step(tool: string, args: Record<string, unknown>) {
+  await push('run', `routiq.run("${tool}"${argText(args)})`, true)
+  const r = await callTool(tool, args)
+  calls.value++
+  return r
 }
 
 async function run(plan: Plan) {
@@ -88,25 +117,35 @@ async function run(plan: Plan) {
     await wait(250)
     await push('discover', `routiq.discover("${plan.discover}")`, true)
     await wait(200)
-    await push('run', `routiq.run("${plan.tool}"${Object.keys(plan.args).length ? `, ${JSON.stringify(plan.args)}` : ''})`, true)
-    let result = await callTool(plan.tool, plan.args)
-    calls.value++
     let tool = plan.tool
-    // A plain wallet, or a contract that is not a token (e.g. a smart wallet): show its portfolio instead.
+    let result: any
+    try {
+      result = await step(tool, plan.args)
+    } catch (err: any) {
+      // A hash that is not on Elysium may be on Robinhood Chain.
+      if (tool !== 'tx_lookup' || plan.args.chain) throw err
+      await push('note', 'not found on Elysium — trying Robinhood Chain')
+      result = await step(tool, { ...plan.args, chain: RH })
+    }
     const notAToken = result?.verdict === 'not_a_contract' || (result?.verdict === 'unknown_token' && !result?.symbol)
     if (tool === 'token_verify' && notAToken) {
       await push('note', result.verdict === 'not_a_contract' ? 'no contract here — looks like a wallet' : 'not a token — checking it as a wallet')
-      await push('run', `routiq.run("wallet_portfolio", {"address":"${short(String(plan.args.address))}"})`, true)
       tool = 'wallet_portfolio'
-      result = await callTool(tool, { address: plan.args.address })
-      calls.value++
-    } else if (tool === 'token_verify' && result?.verdict === 'not_listed') {
-      await push('run', `routiq.run("stock_tokens", {"query":"${plan.args.symbol}"})`, true)
-      tool = 'stock_tokens'
-      const alt = await callTool(tool, { query: plan.args.symbol, limit: 3 })
-      calls.value++
-      if (alt.matches) result = alt
-      else tool = 'token_verify'
+      result = await step(tool, { address: plan.args.address, chain: plan.args.chain ?? ELY })
+    } else if (tool === 'token_verify' && result?.verdict === 'not_listed' && plan.args.symbol) {
+      // Ticker search: Elysium list first, then Robinhood stock tokens, then a fuzzy search on both.
+      const other = (plan.args.chain ?? ELY) === ELY ? RH : ELY
+      await push('note', `not on ${result.chain} — checking ${other === RH ? 'Robinhood Chain' : 'Elysium'}`)
+      const r2 = await step(tool, { symbol: plan.args.symbol, chain: other })
+      if (r2?.verdict !== 'not_listed') result = r2
+      else {
+        const alt = await step('elysium_tokens', { query: String(plan.args.symbol), limit: 4 })
+        if (alt.matches) { tool = 'elysium_tokens'; result = alt }
+        else {
+          const st = await step('stock_tokens', { query: String(plan.args.symbol), limit: 3, chain: RH })
+          if (st.matches) { tool = 'stock_tokens'; result = st }
+        }
+      }
     }
     for (const l of summarize(tool, result)) { await push(l.kind, l.text); await wait(120) }
   } catch (err: any) {
@@ -117,15 +156,17 @@ async function run(plan: Plan) {
 }
 
 const PRESETS: { label: string, icon: string, plan: () => Plan | null }[] = [
+  { label: 'Quote 1 HYPE → USDC', icon: 'i-lucide-route', plan: () => ({ prompt: 'How much USDC do I get for 1 HYPE on Elysium?', discover: 'best swap price elysium', tool: 'swap_quote', args: { sell: 'HYPE', buy: 'USDC', amount: '1' } }) },
+  { label: 'Elysium tokens', icon: 'i-lucide-list', plan: () => ({ prompt: 'Which tokens can I trade on Elysium?', discover: 'elysium token list', tool: 'elysium_tokens', args: { limit: 6 } }) },
+  { label: 'Verify KNTQ', icon: 'i-lucide-badge-check', plan: () => ({ prompt: 'Which KNTQ is the real one on Elysium?', discover: 'verify token', tool: 'token_verify', args: { symbol: 'KNTQ' } }) },
+  { label: 'Elysium status', icon: 'i-lucide-activity', plan: () => ({ prompt: 'Check Elysium before I trade', discover: 'chain gas status', tool: 'chain_status', args: {} }) },
+  { label: 'Verify TSLA', icon: 'i-lucide-badge-check', plan: () => ({ prompt: 'Which TSLA token is the official one on Robinhood Chain?', discover: 'verify stock token', tool: 'token_verify', args: { symbol: 'TSLA', chain: RH } }) },
+  { label: 'Quote 100 USDG → TSLA', icon: 'i-lucide-route', plan: () => ({ prompt: 'How much TSLA do I get for 100 USDG on Robinhood Chain?', discover: 'best swap price', tool: 'swap_quote', args: { sell: 'USDG', buy: 'TSLA', amount: '100', chain: RH } }) },
   { label: 'Market open?', icon: 'i-lucide-clock', plan: () => ({ prompt: 'Is the US stock market open right now?', discover: 'us market hours', tool: 'market_hours', args: {} }) },
-  { label: 'Verify TSLA', icon: 'i-lucide-badge-check', plan: () => ({ prompt: 'Which TSLA token is the official one?', discover: 'verify stock token', tool: 'token_verify', args: { symbol: 'TSLA' } }) },
-  { label: 'Find NVIDIA', icon: 'i-lucide-search', plan: () => ({ prompt: 'Find the NVIDIA stock token', discover: 'stock token registry', tool: 'stock_tokens', args: { query: 'nvidia', limit: 3 } }) },
-  { label: 'Quote 100 USDG → TSLA', icon: 'i-lucide-route', plan: () => ({ prompt: 'How much TSLA do I get for 100 USDG?', discover: 'best swap price', tool: 'swap_quote', args: { sell: 'USDG', buy: 'TSLA', amount: '100' } }) },
-  { label: 'Chain status', icon: 'i-lucide-activity', plan: () => ({ prompt: 'Check Robinhood Chain before I trade', discover: 'chain gas status', tool: 'chain_status', args: {} }) },
   {
     label: 'My wallet', icon: 'i-lucide-wallet',
     plan: () => account.value
-      ? { prompt: 'What does my wallet hold on Robinhood Chain?', discover: 'wallet portfolio', tool: 'wallet_portfolio', args: { address: account.value } }
+      ? { prompt: 'What does my wallet hold on Elysium?', discover: 'wallet portfolio', tool: 'wallet_portfolio', args: { address: account.value } }
       : null
   }
 ]
@@ -142,9 +183,9 @@ function planFor(input: string): Plan | null {
   const q = input.trim()
   if (!q) return null
   if (/^0x[0-9a-fA-F]{64}$/.test(q)) return { prompt: `Explain transaction ${short(q)}`, discover: 'transaction lookup', tool: 'tx_lookup', args: { hash: q } }
-  if (/^0x[0-9a-fA-F]{40}$/.test(q)) return { prompt: `What is ${short(q)}?`, discover: 'token or wallet check', tool: 'token_verify', args: { address: q } }
-  if (/^[A-Za-z.]{1,6}$/.test(q)) return { prompt: `Is ${q.toUpperCase()} an official stock token?`, discover: 'verify stock token', tool: 'token_verify', args: { symbol: q.toUpperCase() } }
-  return { prompt: `Find the ${q} stock token`, discover: 'stock token registry', tool: 'stock_tokens', args: { query: q.slice(0, 64), limit: 3 } }
+  if (/^0x[0-9a-fA-F]{40}$/.test(q)) return { prompt: `What is ${short(q)} on Elysium?`, discover: 'token or wallet check', tool: 'token_verify', args: { address: q } }
+  if (/^[A-Za-z0-9.]{1,10}$/.test(q)) return { prompt: `Is ${q.toUpperCase()} a real token?`, discover: 'verify token', tool: 'token_verify', args: { symbol: q.toUpperCase() } }
+  return { prompt: `Find ${q}`, discover: 'token search', tool: 'elysium_tokens', args: { query: q.slice(0, 64), limit: 4 } }
 }
 
 function submit() {
@@ -190,7 +231,7 @@ onMounted(() => {
         </div>
       </div>
       <div v-if="busy && lines.length && lines[lines.length - 1]!.kind === 'run'" class="flex items-center gap-2 pl-6 text-dimmed">
-        <UIcon name="i-lucide-loader-circle" class="size-3.5 animate-spin" />calling Robinhood Chain…
+        <UIcon name="i-lucide-loader-circle" class="size-3.5 animate-spin" />calling the chain…
       </div>
     </div>
 
@@ -201,7 +242,7 @@ onMounted(() => {
         <input
           v-model="query"
           class="min-w-0 flex-1 bg-transparent py-1.5 text-sm text-highlighted outline-none placeholder:text-dimmed"
-          placeholder="Ticker, company, wallet or tx hash…"
+          placeholder="Ticker, token, wallet or tx hash…"
           aria-label="Ask ROUTIQ"
           maxlength="80"
         >
@@ -216,7 +257,7 @@ onMounted(() => {
           <UIcon :name="p.icon" class="size-3.5" />{{ p.label }}
         </button>
       </div>
-      <p class="mt-2.5 px-1 text-[11px] text-dimmed">Real results from Robinhood Chain via this site’s MCP server · {{ calls }} call{{ calls === 1 ? '' : 's' }} this visit</p>
+      <p class="mt-2.5 px-1 text-[11px] text-dimmed">Real results from Elysium and Robinhood Chain via this site’s MCP server · {{ calls }} call{{ calls === 1 ? '' : 's' }} this visit</p>
     </div>
   </div>
 </template>

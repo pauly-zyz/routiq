@@ -1,9 +1,9 @@
 # ROUTIQ
 
 ROUTIQ is a tool router for AI agents, **launching on Elysium** (Kinetiq's Hyperliquid L2, chain ID 99901, gas in HYPE).
-The live MCP tools run on **Robinhood Chain** today (Ethereum L2 on Arbitrum Orbit, chain ID 4663); Elysium tools come with the launch.
-An agent connects once, then discovers and calls on-chain tools — stock-token registry and verification,
-wallets, transactions, market hours — through one MCP server.
+Every MCP tool runs on **Elysium** (the default) and on **Robinhood Chain** (chain ID 4663, `chain: "robinhood"`).
+An agent connects once, then discovers and calls on-chain tools — token lists and verification, wallets, transactions,
+approvals, Uniswap v3/v4 swaps — through one MCP server.
 
 This repo holds the website, the remote MCP server (`/mcp`) and the review-and-sign page (`/sign`), deployed together on Vercel.
 
@@ -32,17 +32,20 @@ Do not deploy with `npm run generate`: that produces a static site without the `
 
 Endpoint: `https://www.routiq.tech/mcp` (Streamable HTTP, stateless, JSON responses, CORS open). A browser `GET` returns a short description.
 
+All chain tools take an optional `chain`: `"elysium"` (default) or `"robinhood"`.
+
 | Tool | What it returns |
 | --- | --- |
 | `chain_status` | Latest block, block age, gas price, average block time |
-| `stock_tokens` | Official Robinhood stock tokens matching a ticker or name |
-| `token_verify` | Verdict for an address or ticker: official, USDG, impersonation risk, unknown |
-| `wallet_portfolio` | ETH, USDG and official stock-token balances of an address (one Multicall3 call) |
+| `elysium_tokens` | HYPE, WHYPE, USDC and the liquid Elysium tokens from `server/data/elysium-tokens.json` |
+| `stock_tokens` | Robinhood Chain: official Robinhood stock tokens matching a ticker or name |
+| `token_verify` | Verdict for an address or ticker. Elysium: listed, native coin, impersonation risk, unknown. Robinhood: official, USDG, impersonation risk, unknown |
+| `wallet_portfolio` | Native coin and supported token balances of an address (one Multicall3 call) |
 | `tx_lookup` | Status, fee and decoded ERC-20 transfers of a transaction |
 | `market_hours` | US exchange session and next open (holiday calendar 2026–2027) |
-| `swap_quote` | Best route across Uniswap v3 (direct or via USDG/WETH) and v4 (hookless pools, direct or via ETH/USDG), with price impact |
+| `swap_quote` | Best route across Uniswap v3 (direct or via the chain's stablecoin/wrapped coin) and v4 (hookless pools, direct or via the native coin/stablecoin), with price impact |
 | `swap_build` | v3: exact approval + SwapRouter02 `multicall(deadline, …)`. v4: exact approval to Permit2 + 30-min Permit2 allowance + Universal Router `V4_SWAP`. Simulated; returns `signUrl` |
-| `transfer_build` | ETH / ERC-20 transfer with safety checks, simulated; returns `signUrl` |
+| `transfer_build` | Native coin / ERC-20 transfer with safety checks, simulated; returns `signUrl` |
 | `approvals_check` | Allowances to Uniswap SwapRouter02, Universal Router, Permit2, v4 PositionManager (+ custom) |
 | `approval_revoke` | `approve(spender, 0)`, simulated; returns `signUrl` |
 | `tx_simulate` | `eth_simulateV1` dry run of any call: status, gas, token + native transfers |
@@ -55,8 +58,12 @@ TAKE_ALL — output always goes to the signer, hookless pools only), then re-sim
 
 **Where the data comes from**
 
-- Everything is read from the Robinhood Chain RPC. (Blockscout's API blocks datacenter IPs, so it is not used.)
-- Uniswap v4 pools: `server/data/v4-pools.json` lists hookless pools with fee ≤ 1% between supported assets that had liquidity
+- Everything is read from each chain's RPC (`server/utils/chain.ts` holds both configs and all Uniswap addresses).
+  Blockscout's API blocks datacenter IPs, so it is not used. Elysium has no public explorer yet, so links are omitted there.
+- Elysium: `server/data/elysium-v4-pools.json` (hookless v4 pools touching HYPE/WHYPE/USDC) and `server/data/elysium-tokens.json`
+  (tokens whose buy-and-sell-back quote returns ≥ 90%, one per symbol). Rebuild both with `node scripts/scan-elysium.mjs`
+  (reads ~130k pool events; pass a cached scan file to skip that).
+- Robinhood Chain Uniswap v4 pools: `server/data/v4-pools.json` lists hookless pools with fee ≤ 1% between supported assets that had liquidity
   at scan time (434 of ~1.18M v4 pools). Refresh it with `node scripts/scan-v4-pools.mjs` (optionally pass a provider RPC URL).
 - Official stock tokens = tokens created by the Robinhood StockFactory `0x4783C67b63dE2B358Ac5951a7D41F47A38F3C046`.
   `server/data/stock-tokens.json` is a snapshot of its events (212 tokens); at runtime the server reads newer factory events
@@ -83,7 +90,7 @@ curl -s localhost:3000/mcp -X POST -H 'content-type: application/json' -H 'accep
 | `server/routes/mcp.ts` | MCP HTTP endpoint (CORS, browser info page) |
 | `server/api/chain.get.ts` | Block + gas for the site's live widgets (CDN-cached for 2 s) |
 | `server/utils/mcpServer.ts` | Tool definitions |
-| `server/utils/chain.ts` | viem client, stock-token registry |
+| `server/utils/chain.ts` | Chain configs (Elysium, Robinhood Chain), viem clients, stock-token registry |
 | `server/utils/marketHours.ts` | US market session logic |
 | `server/utils/actions.ts` | Quotes, transaction builders, simulation, sign-link encoding and inspection |
 | `server/api/sign/inspect.post.ts` | Decodes + simulates a sign link for `/sign` |
@@ -95,7 +102,8 @@ curl -s localhost:3000/mcp -X POST -H 'content-type: application/json' -H 'accep
 | Variable | Purpose |
 | --- | --- |
 | `NUXT_PUBLIC_SITE_URL` | Site URL for install commands, MCP URL and SEO tags. Defaults to `https://www.routiq.tech` |
-| `NUXT_RPC_URL` | Server-side RPC for the MCP tools and `/api/chain`. Use a provider endpoint (Alchemy, QuickNode, Dwellir) in production; the public RPC is rate limited. Stays on the server |
+| `NUXT_ELYSIUM_RPC_URL` | Server-side Elysium RPC for the MCP tools and `/api/chain` (default: the public Kinetiq RPC). Stays on the server |
+| `NUXT_RPC_URL` | Server-side Robinhood Chain RPC. Use a provider endpoint (Alchemy, QuickNode, Dwellir) in production; the public RPC is rate limited. Stays on the server |
 | `NUXT_PUBLIC_RPC_URL` | RPC suggested to wallets when they add Robinhood Chain (public; default is the official public RPC) |
 
 ## Before launch
@@ -106,6 +114,6 @@ curl -s localhost:3000/mcp -X POST -H 'content-type: application/json' -H 'accep
 
 ## What is real vs. preview
 
-- **Real:** the MCP server and its 12 tools, the `/sign` page, the hero console (every run is a real `/mcp` call),
+- **Real:** the MCP server and its 13 tools on Elysium and Robinhood Chain, the `/sign` page, the hero console (every run is a real `/mcp` call),
   wallet connect and network switch, live block / gas on the site, the hosted `SKILL.md`.
 - **Preview (labelled on the page):** planned tools and their prices, the balance card, and the CLI.

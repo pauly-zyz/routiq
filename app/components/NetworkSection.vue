@@ -33,8 +33,8 @@ const blockText = computed(() => state.value.block ? state.value.block.toLocaleS
   <section id="network" class="relative border-y border-default bg-[var(--ui-bg-muted)] py-24 sm:py-32">
     <UContainer>
       <SectionHeading eyebrow="Network">
-        Launching on Elysium. <span class="text-gradient">Live on Robinhood Chain today.</span>
-        <template #sub>ROUTIQ launches on Elysium, Hyperliquid’s Layer 2. Our first tools already run on Robinhood Chain — the live numbers below are the same data the <code class="font-mono text-teal-200">chain_status</code> tool returns.</template>
+        Live on Elysium. <span class="text-gradient">And on Robinhood Chain.</span>
+        <template #sub>ROUTIQ launches on Elysium, Hyperliquid’s Layer 2 — and every MCP tool already runs there: HYPE and USDC swaps, wallets, approvals. Robinhood Chain stays supported for stock tokens. The live numbers below are the same data the <code class="font-mono text-teal-200">chain_status</code> tool returns.</template>
       </SectionHeading>
 
       <div class="grid grid-cols-1 gap-4 md:grid-cols-4 md:grid-rows-[auto_auto_auto]">
@@ -43,7 +43,8 @@ const blockText = computed(() => state.value.block ? state.value.block.toLocaleS
           <div class="max-w-2xl">
             <div class="flex items-center gap-2 font-mono text-xs uppercase tracking-[.16em] text-teal-300"><span class="pulse-dot size-2 rounded-full bg-emerald-400" />Launch chain</div>
             <h3 class="mt-3 font-display text-3xl font-semibold tracking-tight text-highlighted sm:text-4xl">Elysium</h3>
-            <p class="mt-2 text-toned">Hyperliquid’s Layer 2 by Kinetiq — an Arbitrum Orbit chain with fast blocks, settling to HyperEVM. ROUTIQ and the $ROUTIQ token launch here.</p>
+            <p class="mt-2 text-toned">Hyperliquid’s Layer 2 by Kinetiq — an Arbitrum Orbit chain with fast blocks, settling to HyperEVM. ROUTIQ and the $ROUTIQ token launch here, and all 13 tools already work here.</p>
+            <UButton label="Add Elysium to wallet" icon="i-lucide-plus" size="sm" color="primary" variant="soft" class="mt-4" @click="addNetwork('elysium')" />
           </div>
           <dl class="grid shrink-0 grid-cols-3 gap-3 text-center">
             <div class="rounded-2xl border border-default bg-black/20 px-4 py-3"><dt class="font-mono text-[11px] text-dimmed">Chain ID</dt><dd class="mt-1 font-display text-xl font-semibold text-highlighted">99901</dd></div>
@@ -54,7 +55,7 @@ const blockText = computed(() => state.value.block ? state.value.block.toLocaleS
         <article v-reveal v-spotlight class="glass flex flex-col rounded-3xl p-7 md:col-span-2 md:row-span-2">
           <div class="flex flex-wrap items-center gap-2 font-mono text-xs text-dimmed">
             <span :class="['size-2 rounded-full', state.status === 'live' ? 'pulse-dot bg-emerald-400' : 'bg-white/30']" />
-            Robinhood Chain · latest block · {{ state.status === 'live' ? 'live' : state.status === 'down' ? 'RPC unavailable, retrying' : 'connecting…' }}
+            Elysium · latest block · {{ state.status === 'live' ? 'live' : state.status === 'down' ? 'RPC unavailable, retrying' : 'connecting…' }}
           </div>
           <div class="mt-4 font-display text-5xl font-semibold tracking-tight text-gradient tabular-nums sm:text-7xl">{{ blockText }}</div>
           <svg class="mb-4 mt-auto h-24 w-full pt-6" viewBox="0 0 300 70" preserveAspectRatio="none" aria-hidden="true">
@@ -70,13 +71,13 @@ const blockText = computed(() => state.value.block ? state.value.block.toLocaleS
         <article v-reveal="80" v-spotlight class="glass rounded-3xl p-7">
           <div class="font-mono text-xs text-dimmed">Gas price</div>
           <div class="mt-3 font-display text-4xl font-semibold text-highlighted tabular-nums">{{ fmtGwei(gasGwei) }}<small class="ml-1 text-base text-muted">gwei</small></div>
-          <p class="mt-2 text-sm text-muted">Paid in ETH.</p>
+          <p class="mt-2 text-sm text-muted">Paid in HYPE on Elysium.</p>
         </article>
 
         <article v-reveal="140" v-spotlight class="glass flex flex-col items-start rounded-3xl p-7">
           <div class="font-mono text-xs text-dimmed">Robinhood Chain ID</div>
           <div class="mt-3 font-display text-4xl font-semibold text-highlighted">4663</div>
-          <UButton label="Add to wallet" icon="i-lucide-plus" size="sm" color="primary" variant="soft" class="mt-auto pt-1.5" @click="addNetwork" />
+          <UButton label="Add to wallet" icon="i-lucide-plus" size="sm" color="primary" variant="soft" class="mt-auto pt-1.5" @click="addNetwork('robinhood')" />
         </article>
 
         <article v-reveal="200" v-spotlight class="glass flex items-center gap-6 rounded-3xl p-7 md:col-span-2">

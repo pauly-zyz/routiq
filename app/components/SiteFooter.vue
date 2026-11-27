@@ -8,7 +8,7 @@ const openLink = useExternalLink()
     <UContainer class="flex flex-col justify-between gap-12 md:flex-row">
       <div class="max-w-xs">
         <a href="#top" class="flex items-center gap-2.5 font-display text-lg font-bold text-highlighted"><BrandMark :size="28" />ROUTIQ</a>
-        <p class="mt-4 text-sm text-muted">The tool router for AI agents. Launching on Elysium — live on Robinhood Chain today.</p>
+        <p class="mt-4 text-sm text-muted">The tool router for AI agents. Live on Elysium and Robinhood Chain.</p>
       </div>
       <div class="grid grid-cols-2 gap-10 sm:grid-cols-3 sm:gap-20">
         <div>
@@ -17,7 +17,7 @@ const openLink = useExternalLink()
         </div>
         <div>
           <h4 class="mb-4 font-mono text-xs uppercase tracking-widest text-dimmed">Network</h4>
-          <ul class="space-y-2.5 text-sm text-toned"><li><a class="hover:text-highlighted" href="https://robinhoodchain.blockscout.com" target="_blank" rel="noopener">Robinhood Chain explorer</a></li><li><button type="button" class="cursor-pointer hover:text-highlighted" @click="addNetwork">Add network</button></li><li><a class="hover:text-highlighted" href="#network">Live stats</a></li></ul>
+          <ul class="space-y-2.5 text-sm text-toned"><li><a class="hover:text-highlighted" href="https://robinhoodchain.blockscout.com" target="_blank" rel="noopener">Robinhood Chain explorer</a></li><li><button type="button" class="cursor-pointer hover:text-highlighted" @click="addNetwork('elysium')">Add Elysium to wallet</button></li><li><a class="hover:text-highlighted" href="#network">Live stats</a></li></ul>
         </div>
         <div>
           <h4 class="mb-4 font-mono text-xs uppercase tracking-widest text-dimmed">Community</h4>
